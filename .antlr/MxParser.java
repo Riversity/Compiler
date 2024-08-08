@@ -146,14 +146,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_program; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterProgram(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitProgram(this);
-		}
 	}
 
 	public final ProgramContext program() throws RecognitionException {
@@ -226,14 +218,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_block; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterBlock(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitBlock(this);
-		}
 	}
 
 	public final BlockContext block() throws RecognitionException {
@@ -293,28 +277,12 @@ public class MxParser extends Parser {
 		}
 		public TerminalNode Semi() { return getToken(MxParser.Semi, 0); }
 		public VarDefStmtContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterVarDefStmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitVarDefStmt(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ContinueStmtContext extends StatementContext {
 		public TerminalNode Continue() { return getToken(MxParser.Continue, 0); }
 		public TerminalNode Semi() { return getToken(MxParser.Semi, 0); }
 		public ContinueStmtContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterContinueStmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitContinueStmt(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class PurExprStmtContext extends StatementContext {
@@ -323,14 +291,6 @@ public class MxParser extends Parser {
 		}
 		public TerminalNode Semi() { return getToken(MxParser.Semi, 0); }
 		public PurExprStmtContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterPurExprStmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitPurExprStmt(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class IfElseStmtContext extends StatementContext {
@@ -348,14 +308,6 @@ public class MxParser extends Parser {
 		}
 		public TerminalNode Else() { return getToken(MxParser.Else, 0); }
 		public IfElseStmtContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterIfElseStmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitIfElseStmt(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class WhileStmtContext extends StatementContext {
@@ -369,28 +321,12 @@ public class MxParser extends Parser {
 			return getRuleContext(StatementContext.class,0);
 		}
 		public WhileStmtContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterWhileStmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitWhileStmt(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class BreakStmtContext extends StatementContext {
 		public TerminalNode Break() { return getToken(MxParser.Break, 0); }
 		public TerminalNode Semi() { return getToken(MxParser.Semi, 0); }
 		public BreakStmtContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterBreakStmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitBreakStmt(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class BlockStmtContext extends StatementContext {
@@ -398,27 +334,11 @@ public class MxParser extends Parser {
 			return getRuleContext(BlockContext.class,0);
 		}
 		public BlockStmtContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterBlockStmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitBlockStmt(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class EmptyStmtContext extends StatementContext {
 		public TerminalNode Semi() { return getToken(MxParser.Semi, 0); }
 		public EmptyStmtContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterEmptyStmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitEmptyStmt(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ReturnStmtContext extends StatementContext {
@@ -428,14 +348,6 @@ public class MxParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public ReturnStmtContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterReturnStmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitReturnStmt(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ForStmtContext extends StatementContext {
@@ -462,14 +374,6 @@ public class MxParser extends Parser {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public ForStmtContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterForStmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitForStmt(this);
-		}
 	}
 
 	public final StatementContext statement() throws RecognitionException {
@@ -684,14 +588,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_typeName; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterTypeName(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitTypeName(this);
-		}
 	}
 
 	public final TypeNameContext typeName() throws RecognitionException {
@@ -752,14 +648,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_bracket; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterBracket(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitBracket(this);
-		}
 	}
 
 	public final BracketContext bracket() throws RecognitionException {
@@ -811,14 +699,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_varDef; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterVarDef(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitVarDef(this);
-		}
 	}
 
 	public final VarDefContext varDef() throws RecognitionException {
@@ -875,14 +755,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_varTerm; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterVarTerm(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitVarTerm(this);
-		}
 	}
 
 	public final VarTermContext varTerm() throws RecognitionException {
@@ -969,14 +841,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_funcDef; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterFuncDef(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitFuncDef(this);
-		}
 	}
 
 	public final FuncDefContext funcDef() throws RecognitionException {
@@ -1043,14 +907,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_parameterList; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterParameterList(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitParameterList(this);
-		}
 	}
 
 	public final ParameterListContext parameterList() throws RecognitionException {
@@ -1121,14 +977,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_classDef; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterClassDef(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitClassDef(this);
-		}
 	}
 
 	public final ClassDefContext classDef() throws RecognitionException {
@@ -1201,14 +1049,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_argumentList; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterArgumentList(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitArgumentList(this);
-		}
 	}
 
 	public final ArgumentListContext argumentList() throws RecognitionException {
@@ -1270,14 +1110,6 @@ public class MxParser extends Parser {
 		public TerminalNode Decrement() { return getToken(MxParser.Decrement, 0); }
 		public TerminalNode Increment() { return getToken(MxParser.Increment, 0); }
 		public SelfExprContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterSelfExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitSelfExpr(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class FunctionExprContext extends ExpressionContext {
@@ -1290,14 +1122,6 @@ public class MxParser extends Parser {
 			return getRuleContext(ArgumentListContext.class,0);
 		}
 		public FunctionExprContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterFunctionExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitFunctionExpr(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class MemberExprContext extends ExpressionContext {
@@ -1307,14 +1131,6 @@ public class MxParser extends Parser {
 		public TerminalNode Dot() { return getToken(MxParser.Dot, 0); }
 		public TerminalNode Identifier() { return getToken(MxParser.Identifier, 0); }
 		public MemberExprContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterMemberExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitMemberExpr(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class BinaryExprContext extends ExpressionContext {
@@ -1344,14 +1160,6 @@ public class MxParser extends Parser {
 		public TerminalNode LogicAnd() { return getToken(MxParser.LogicAnd, 0); }
 		public TerminalNode LogicOr() { return getToken(MxParser.LogicOr, 0); }
 		public BinaryExprContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterBinaryExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitBinaryExpr(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class BracketExprContext extends ExpressionContext {
@@ -1364,14 +1172,6 @@ public class MxParser extends Parser {
 		public TerminalNode LeftBracket() { return getToken(MxParser.LeftBracket, 0); }
 		public TerminalNode RightBracket() { return getToken(MxParser.RightBracket, 0); }
 		public BracketExprContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterBracketExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitBracketExpr(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class FormattedStringContext extends ExpressionContext {
@@ -1379,14 +1179,6 @@ public class MxParser extends Parser {
 			return getRuleContext(FStringContext.class,0);
 		}
 		public FormattedStringContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterFormattedString(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitFormattedString(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ParentExprContext extends ExpressionContext {
@@ -1396,14 +1188,6 @@ public class MxParser extends Parser {
 		}
 		public TerminalNode RightParen() { return getToken(MxParser.RightParen, 0); }
 		public ParentExprContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterParentExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitParentExpr(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class AtomExprContext extends ExpressionContext {
@@ -1411,14 +1195,6 @@ public class MxParser extends Parser {
 			return getRuleContext(AtomContext.class,0);
 		}
 		public AtomExprContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterAtomExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitAtomExpr(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class UnaryExprContext extends ExpressionContext {
@@ -1433,14 +1209,6 @@ public class MxParser extends Parser {
 		public TerminalNode LogicNot() { return getToken(MxParser.LogicNot, 0); }
 		public TerminalNode BitNot() { return getToken(MxParser.BitNot, 0); }
 		public UnaryExprContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterUnaryExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitUnaryExpr(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class NewTypeContext extends ExpressionContext {
@@ -1454,14 +1222,6 @@ public class MxParser extends Parser {
 			return getRuleContext(LiteralMultiListContext.class,0);
 		}
 		public NewTypeContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterNewType(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitNewType(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class TernaryExprContext extends ExpressionContext {
@@ -1474,14 +1234,6 @@ public class MxParser extends Parser {
 		public TerminalNode Question() { return getToken(MxParser.Question, 0); }
 		public TerminalNode Colon() { return getToken(MxParser.Colon, 0); }
 		public TernaryExprContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterTernaryExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitTernaryExpr(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class AssignExprContext extends ExpressionContext {
@@ -1493,14 +1245,6 @@ public class MxParser extends Parser {
 		}
 		public TerminalNode Assign() { return getToken(MxParser.Assign, 0); }
 		public AssignExprContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterAssignExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitAssignExpr(this);
-		}
 	}
 
 	public final ExpressionContext expression() throws RecognitionException {
@@ -1964,80 +1708,32 @@ public class MxParser extends Parser {
 	public static class NullContext extends AtomContext {
 		public TerminalNode Null() { return getToken(MxParser.Null, 0); }
 		public NullContext(AtomContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterNull(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitNull(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class TFContext extends AtomContext {
 		public TerminalNode True() { return getToken(MxParser.True, 0); }
 		public TerminalNode False() { return getToken(MxParser.False, 0); }
 		public TFContext(AtomContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterTF(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitTF(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class IdentifierContext extends AtomContext {
 		public TerminalNode Identifier() { return getToken(MxParser.Identifier, 0); }
 		public IdentifierContext(AtomContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterIdentifier(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitIdentifier(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class DecimalContext extends AtomContext {
 		public TerminalNode Decimal() { return getToken(MxParser.Decimal, 0); }
 		public DecimalContext(AtomContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterDecimal(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitDecimal(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class StringConstContext extends AtomContext {
 		public TerminalNode StringConst() { return getToken(MxParser.StringConst, 0); }
 		public StringConstContext(AtomContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterStringConst(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitStringConst(this);
-		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ThisContext extends AtomContext {
 		public TerminalNode This() { return getToken(MxParser.This, 0); }
 		public ThisContext(AtomContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterThis(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitThis(this);
-		}
 	}
 
 	public final AtomContext atom() throws RecognitionException {
@@ -2137,14 +1833,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_literalMultiList; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterLiteralMultiList(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitLiteralMultiList(this);
-		}
 	}
 
 	public final LiteralMultiListContext literalMultiList() throws RecognitionException {
@@ -2216,14 +1904,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_literalList; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterLiteralList(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitLiteralList(this);
-		}
 	}
 
 	public final LiteralListContext literalList() throws RecognitionException {
@@ -2294,14 +1974,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_literalAtom; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterLiteralAtom(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitLiteralAtom(this);
-		}
 	}
 
 	public final LiteralAtomContext literalAtom() throws RecognitionException {
@@ -2353,14 +2025,6 @@ public class MxParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_fString; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterFString(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitFString(this);
-		}
 	}
 
 	public final FStringContext fString() throws RecognitionException {
