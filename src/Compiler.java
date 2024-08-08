@@ -1,6 +1,8 @@
 import ast.node.BaseNode;
 import org.antlr.v4.runtime.*;
 import parser.*;
+import util.error.TroubleMaker;
+
 import java.util.stream.Stream;
 
 public class Compiler {
@@ -24,11 +26,12 @@ public class Compiler {
       var input = CharStreams.fromStream(System.in);
       MxLexer lexer = new MxLexer(input);
       lexer.removeErrorListeners();
-      lexer.addErrorListener(new BaseErrorListener());
+      lexer.addErrorListener(new TroubleMaker());
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       MxParser parser = new MxParser(tokens);
       parser.removeErrorListeners();
-      parser.addErrorListener(new BaseErrorListener());
+      parser.addErrorListener(new TroubleMaker());
+      parser.program();
       // BaseNode program = new ASTBuilder().visit(parser.program());
       // symbol collector
       // type checker
