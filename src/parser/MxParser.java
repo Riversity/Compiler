@@ -1,6 +1,5 @@
-// Generated from Mx.g4 by ANTLR 4.13.2
+// Generated from //wsl.localhost/Ubuntu-20.04/home/riversity/Compiler/Mx.g4 by ANTLR 4.13.1
 package parser;
-
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -10,9 +9,9 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
 public class MxParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.13.2", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -156,6 +155,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitProgram(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitProgram(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final ProgramContext program() throws RecognitionException {
@@ -236,6 +240,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitBlock(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitBlock(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final BlockContext block() throws RecognitionException {
@@ -303,6 +312,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitVarDefStmt(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitVarDefStmt(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ContinueStmtContext extends StatementContext {
@@ -316,6 +330,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitContinueStmt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitContinueStmt(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -332,6 +351,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitPurExprStmt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitPurExprStmt(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -358,6 +382,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitIfElseStmt(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitIfElseStmt(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class WhileStmtContext extends StatementContext {
@@ -379,6 +408,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitWhileStmt(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitWhileStmt(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class BreakStmtContext extends StatementContext {
@@ -392,6 +426,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitBreakStmt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitBreakStmt(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -408,6 +447,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitBlockStmt(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitBlockStmt(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class EmptyStmtContext extends StatementContext {
@@ -420,6 +464,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitEmptyStmt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitEmptyStmt(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -437,6 +486,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitReturnStmt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitReturnStmt(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -471,6 +525,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitForStmt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitForStmt(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -694,6 +753,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitTypeName(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitTypeName(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final TypeNameContext typeName() throws RecognitionException {
@@ -762,6 +826,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitBracket(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitBracket(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final BracketContext bracket() throws RecognitionException {
@@ -820,6 +889,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitVarDef(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitVarDef(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -884,6 +958,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitVarTerm(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitVarTerm(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -979,6 +1058,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitFuncDef(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitFuncDef(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final FuncDefContext funcDef() throws RecognitionException {
@@ -1052,6 +1136,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitParameterList(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitParameterList(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1130,6 +1219,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitClassDef(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitClassDef(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1211,6 +1305,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitArgumentList(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitArgumentList(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final ArgumentListContext argumentList() throws RecognitionException {
@@ -1280,6 +1379,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitSelfExpr(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitSelfExpr(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class FunctionExprContext extends ExpressionContext {
@@ -1300,6 +1404,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitFunctionExpr(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitFunctionExpr(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class MemberExprContext extends ExpressionContext {
@@ -1316,6 +1425,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitMemberExpr(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitMemberExpr(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -1354,6 +1468,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitBinaryExpr(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitBinaryExpr(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class BracketExprContext extends ExpressionContext {
@@ -1374,6 +1493,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitBracketExpr(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitBracketExpr(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class FormattedStringContext extends ExpressionContext {
@@ -1388,6 +1512,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitFormattedString(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitFormattedString(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -1406,6 +1535,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitParentExpr(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitParentExpr(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class AtomExprContext extends ExpressionContext {
@@ -1420,6 +1554,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitAtomExpr(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitAtomExpr(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -1443,6 +1582,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitUnaryExpr(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitUnaryExpr(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class NewTypeContext extends ExpressionContext {
@@ -1464,6 +1608,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitNewType(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitNewType(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class TernaryExprContext extends ExpressionContext {
@@ -1484,6 +1633,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitTernaryExpr(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitTernaryExpr(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class AssignExprContext extends ExpressionContext {
@@ -1502,6 +1656,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitAssignExpr(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitAssignExpr(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1974,6 +2133,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitNull(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitNull(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class TFContext extends AtomContext {
@@ -1988,6 +2152,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitTF(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitTF(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class IdentifierContext extends AtomContext {
@@ -2000,6 +2169,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitIdentifier(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitIdentifier(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -2014,6 +2188,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitDecimal(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitDecimal(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class StringConstContext extends AtomContext {
@@ -2027,6 +2206,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitStringConst(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitStringConst(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ThisContext extends AtomContext {
@@ -2039,6 +2223,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitThis(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitThis(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -2147,6 +2336,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitLiteralMultiList(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitLiteralMultiList(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final LiteralMultiListContext literalMultiList() throws RecognitionException {
@@ -2226,6 +2420,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitLiteralList(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitLiteralList(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final LiteralListContext literalList() throws RecognitionException {
@@ -2304,6 +2503,11 @@ public class MxParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitLiteralAtom(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitLiteralAtom(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final LiteralAtomContext literalAtom() throws RecognitionException {
@@ -2362,6 +2566,11 @@ public class MxParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MxListener ) ((MxListener)listener).exitFString(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitFString(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 

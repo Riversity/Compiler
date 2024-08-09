@@ -1,4 +1,4 @@
-// Generated from Mx.g4 by ANTLR 4.13.2
+// Generated from //wsl.localhost/Ubuntu-20.04/home/riversity/Compiler/Mx.g4 by ANTLR 4.13.1
 package parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
