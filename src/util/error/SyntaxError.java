@@ -1,17 +1,9 @@
 package util.error;
 
-import org.antlr.v4.runtime.*;
+import util.Position;
 
-public class SyntaxError extends RuntimeException {
-  private String message;
-  private int line;
-  private int charPositionInLine;
-  public SyntaxError(String message, int line, int charPositionInLine) {
-    this.message = message;
-    this.line = line;
-    this.charPositionInLine = charPositionInLine;
-  }
-  public String toString() {
-    return message + Integer.toString(line) + Integer.toString(charPositionInLine);
+public class SyntaxError extends MyError {
+  public SyntaxError(String msg, Position pos) {
+    super("Syntax Error: " + msg, pos);
   }
 }

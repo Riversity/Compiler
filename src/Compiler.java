@@ -3,15 +3,13 @@ import org.antlr.v4.runtime.*;
 import parser.*;
 import util.error.TroubleMaker;
 
-import java.util.stream.Stream;
-
 public class Compiler {
   public static void main(String[] args) {
     /* Stream.iterate(1, i -> i + 1)
         .limit(10)
         .forEach(System.out::println); */
     if (args.length == 0) {
-      System.out.println("Usage: java Compiler <filename>");
+      System.out.println("Usage: -fsyntax-only <filename>");
       return;
     } else if (args[0].equals("-fsyntax-only")) {
         System.out.println("Semantic check");
