@@ -225,48 +225,6 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssignExpr(MxParser.AssignExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code This}
-	 * labeled alternative in {@link MxParser#atom}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitThis(MxParser.ThisContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code Null}
-	 * labeled alternative in {@link MxParser#atom}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNull(MxParser.NullContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code TF}
-	 * labeled alternative in {@link MxParser#atom}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTF(MxParser.TFContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code Identifier}
-	 * labeled alternative in {@link MxParser#atom}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIdentifier(MxParser.IdentifierContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code Decimal}
-	 * labeled alternative in {@link MxParser#atom}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDecimal(MxParser.DecimalContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code StringConst}
-	 * labeled alternative in {@link MxParser#atom}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStringConst(MxParser.StringConstContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link MxParser#literalMultiList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

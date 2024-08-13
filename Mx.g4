@@ -19,7 +19,7 @@ statement : block                                               # BlockStmt
     | ';'                                                       # EmptyStmt
     ;
 
-typeName : (Int | Bool | String | Void | Identifier) bracket*;
+typeName : type = (Int | Bool | String | Void | Identifier) bracket*;
 bracket : '[' expression? ']';
 
 varDef : typeName varTerm (',' varTerm)*;
@@ -32,7 +32,8 @@ classDef : Class Identifier '{' (varDef ';' | funcDef)* '}' ';' ;
 
 argumentList : expression (',' expression)*;
 
-expression : atom                                   # AtomExpr
+expression : (This | Null | (True | False) |
+              Identifier | Decimal | StringConst)   # AtomExpr
     | fString                                       # FormattedString
     | '(' expression ')'                            # ParentExpr
     | expression '.' Identifier                     # MemberExpr
@@ -59,14 +60,6 @@ expression : atom                                   # AtomExpr
 
     | <assoc=right> expression '=' expression   # AssignExpr
     | <assoc=right> expression '?' expression ':' expression # TernaryExpr
-    ;
-
-atom : This                             # This
-    | Null                              # Null
-    | (True | False)                    # TF
-    | Identifier                        # Identifier
-    | Decimal                           # Decimal
-    | StringConst                       # StringConst
     ;
 
 // Lexer
