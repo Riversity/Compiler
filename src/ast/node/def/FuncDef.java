@@ -7,7 +7,7 @@ import util.scope.FuncScope;
 
 import java.util.ArrayList;
 
-public class FuncDef extends BaseDef {
+public class FuncDef extends Def {
   public FuncScope scope;
   public ArrayList<VarDef> params;
   public Block body;

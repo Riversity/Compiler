@@ -7,7 +7,7 @@ import util.scope.ClassScope;
 
 import java.util.ArrayList;
 
-public class ClassDef extends BaseDef {
+public class ClassDef extends Def {
   public ClassScope classScope;
   public ClassInfo classInfo;
 

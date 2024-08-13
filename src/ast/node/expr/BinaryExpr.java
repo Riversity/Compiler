@@ -1,12 +1,12 @@
 package ast.node.expr;
 
 import ast.AstVisitor;
-import ast.node.BaseNode;
 import util.error.MyError;
-import util.info.*;
 
-public class Expr extends BaseNode {
-  public BaseInfo info;
+public class BinaryExpr extends Expr {
+  public Expr lhs;
+  public String op;
+  public Expr rhs;
 
   @Override
   public <T> T accept(AstVisitor<T> visitor) throws MyError {

@@ -1,14 +1,14 @@
-package ast.node.stmt;
+package ast.node.expr;
 
 import ast.AstVisitor;
 import util.error.MyError;
-import util.scope.BaseScope;
 
 import java.util.ArrayList;
 
-public class Block extends Stmt {
-  public BaseScope scope;
-  public ArrayList<Stmt> statements;
+public class FStrExpr extends Expr {
+  String fHead;
+  ArrayList<String> fBody;
+  String fTail;
 
   @Override
   public <T> T accept(AstVisitor<T> visitor) throws MyError {

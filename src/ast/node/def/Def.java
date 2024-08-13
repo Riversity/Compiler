@@ -5,7 +5,7 @@ import ast.*;
 import util.error.MyError;
 import util.info.BaseInfo;
 
-public abstract class BaseDef extends BaseNode {
+public class Def extends BaseNode {
   public BaseInfo info;
 
   public String getName() {

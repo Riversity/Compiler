@@ -4,7 +4,7 @@ import ast.AstVisitor;
 import ast.node.BaseNode;
 import util.error.*;
 
-public final class AtomExpr extends BaseNode {
+public final class AtomExpr extends Expr {
   public static enum Type {
     THIS, NULL, TF, ID, DEC, STR, CUSTOM
   }
