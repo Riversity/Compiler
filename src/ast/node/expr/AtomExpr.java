@@ -8,7 +8,7 @@ public final class AtomExpr extends Expr {
   public static enum Type {
     THIS, NULL, TF, ID, DEC, STR, CUSTOM
   }
-  public Type atom_type;
+  public Type atomType;
   public String val;
 
   /*

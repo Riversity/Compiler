@@ -1,5 +1,7 @@
 package ast;
 
+import org.antlr.v4.runtime.misc.Pair;
+
 import ast.node.*;
 import ast.node.def.*;
 import ast.node.expr.*;
@@ -7,6 +9,8 @@ import ast.node.stmt.*;
 import parser.MxBaseVisitor;
 import parser.MxParser;
 import util.Position;
+import util.error.SyntaxError;
+import util.info.TypeInfo;
 
 public class AstBuilder extends MxBaseVisitor<BaseNode> {
   @Override
@@ -126,13 +130,49 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
   @Override
   public BaseNode 
   visitTypeName(MxParser.TypeNameContext ctx) {
-    // Not Finished!!!
-
+    var typeNode = new TypeNode();
+    typeNode.pos = new Position(ctx.start);
+    String type = ctx.type.getText();
+    typeNode.info = new TypeInfo(type, ctx.bracket().size());
+    boolean flag = false;
+    for(var br : ctx.bracket()) {
+      if(br.expression() != null) {
+        if(flag) throw new SyntaxError
+                ("Illegal initialization", typeNode.pos);
+        else {
+          flag = true;
+          typeNode.width.add((Expr) visit(br.expression()));
+        }
+      }
+    }
+    return typeNode;
   }
   /* visitBracket */
   @Override
   public BaseNode 
-  visitBracket(MxParser.BracketContext ctx) { return visitChildren(ctx); }
+  visitVarDef(MxParser.VarDefContext ctx) {
+    var varDef = new VarDef();
+    varDef.pos = new Position(ctx.start);
+    varDef.type = (TypeNode) visit(ctx.typeName());
+    for(var term : ctx.varTerm()) {
+      var id =  term.Identifier().getText();
+      Expr expr = null;
+      if(term.literalMultiList() != null) {
+        expr = (LiteralML) visit(term.literalMultiList());
+      }
+      else if(term.expression() != null) {
+        expr = (Expr) visit(term.expression());
+      }
+      varDef.list.add(new Pair<>(id, expr));
+    }
+    return varDef;
+  }
+  /* visitVarTerm */
+  @Override
+  public BaseNode 
+  visitFuncDef(MxParser.FuncDefContext ctx) {
+
+  }
   /**
    * {@inheritDoc}
    *
@@ -141,7 +181,9 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
    */
   @Override
   public BaseNode 
-  visitVarDef(MxParser.VarDefContext ctx) { return visitChildren(ctx); }
+  visitParameterList(MxParser.ParameterListContext ctx) {
+
+  }
   /**
    * {@inheritDoc}
    *
@@ -150,7 +192,9 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
    */
   @Override
   public BaseNode 
-  visitVarTerm(MxParser.VarTermContext ctx) { return visitChildren(ctx); }
+  visitClassDef(MxParser.ClassDefContext ctx) {
+
+  }
   /**
    * {@inheritDoc}
    *
@@ -159,34 +203,9 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
    */
   @Override
   public BaseNode 
-  visitFuncDef(MxParser.FuncDefContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitParameterList(MxParser.ParameterListContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitClassDef(MxParser.ClassDefContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitArgumentList(MxParser.ArgumentListContext ctx) { return visitChildren(ctx); }
+  visitArgumentList(MxParser.ArgumentListContext ctx) {
+
+  }
   /**
    * {@inheritDoc}
    *
@@ -231,34 +250,33 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
    */
   @Override
   public BaseNode 
-  visitBracketExpr(MxParser.BracketExprContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
+  visitBracketExpr(MxParser.BracketExprContext ctx) {
+
+  }
   @Override
   public BaseNode 
-  visitFormattedString(MxParser.FormattedStringContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
+  visitFormattedString(MxParser.FormattedStringContext ctx) {
+    return visit(ctx.fString());
+  }
   @Override
   public BaseNode 
-  visitParentExpr(MxParser.ParentExprContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
+  visitParentExpr(MxParser.ParentExprContext ctx) {
+    return visit(ctx.expression());
+  }
   @Override
   public BaseNode 
-  visitAtomExpr(MxParser.AtomExprContext ctx) { return visitChildren(ctx); }
+  visitAtomExpr(MxParser.AtomExprContext ctx) {
+    var atom = new AtomExpr();
+    atom.pos = new Position(ctx.start);
+    atom.val = ctx.getText();
+    if(ctx.This() != null) atom.atomType = AtomExpr.Type.THIS;
+    else if(ctx.Null() != null) atom.atomType = AtomExpr.Type.NULL;
+    else if(ctx.True() != null || ctx.False() != null) atom.atomType = AtomExpr.Type.TF;
+    else if(ctx.Identifier() != null) atom.atomType = AtomExpr.Type.ID;
+    else if(ctx.Decimal() != null) atom.atomType = AtomExpr.Type.DEC;
+    else if(ctx.StringConst() != null) atom.atomType = AtomExpr.Type.STR;
+    return atom;
+  }
   /**
    * {@inheritDoc}
    *
@@ -276,114 +294,51 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
    */
   @Override
   public BaseNode 
-  visitNewType(MxParser.NewTypeContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitTernaryExpr(MxParser.TernaryExprContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitAssignExpr(MxParser.AssignExprContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitThis(MxParser.ThisContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitNull(MxParser.NullContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitTF(MxParser.TFContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitIdentifier(MxParser.IdentifierContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitDecimal(MxParser.DecimalContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitStringConst(MxParser.StringConstContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitLiteralMultiList(MxParser.LiteralMultiListContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitLiteralList(MxParser.LiteralListContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitLiteralAtom(MxParser.LiteralAtomContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitFString(MxParser.FStringContext ctx) { return visitChildren(ctx); }
+  visitNewType(MxParser.NewTypeContext ctx) {
 
+  }
+  @Override
+  public BaseNode 
+  visitTernaryExpr(MxParser.TernaryExprContext ctx) {
+    var ternary = new TernaryExpr();
+    ternary.pos = new Position(ctx.start);
+    ternary.condition = (Expr) visit(ctx.expression(0));
+    ternary.trueBranch = (Expr) visit(ctx.expression(1));
+    ternary.falseBranch = (Expr) visit(ctx.expression(2));
+    return ternary;
+  }
+  @Override
+  public BaseNode 
+  visitAssignExpr(MxParser.AssignExprContext ctx) {
+    var assign = new AssignExpr();
+    assign.pos = new Position(ctx.start);
+    assign.lhs = (Expr) visit(ctx.expression(0));
+    assign.rhs = (Expr) visit(ctx.expression(1));
+    return assign;
+  }
+  @Override
+  public BaseNode 
+  visitLiteralMultiList(MxParser.LiteralMultiListContext ctx) {
+
+  }
+  /* literalList */
+  /* literalAtom */
+  @Override
+  public BaseNode 
+  visitFString(MxParser.FStringContext ctx) {
+    var fStr = new FStrExpr();
+    fStr.pos = new Position(ctx.start);
+    /* do not trim f" $ etc */
+    if(ctx.FAtom() != null) {
+      fStr.fAtom = ctx.FAtom().getText();
+    }
+    else {
+      fStr.fHead = ctx.FHead().getText();
+      fStr.fTail = ctx.FTail().getText();
+      for (var body : ctx.FBody()) {
+        fStr.fBody.add(body.getText());
+      }
+    }
+    return fStr;
+  }
 }

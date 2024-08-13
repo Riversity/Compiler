@@ -3,13 +3,14 @@ package ast.node.def;
 import ast.AstVisitor;
 import ast.node.stmt.Block;
 import util.error.MyError;
+import util.info.TypeInfo;
 import util.scope.FuncScope;
 
 import java.util.ArrayList;
 
 public class FuncDef extends Def {
   public FuncScope scope;
-  public ArrayList<VarDef> params;
+  public ArrayList<TypeInfo> params;
   public Block body;
 
   @Override
