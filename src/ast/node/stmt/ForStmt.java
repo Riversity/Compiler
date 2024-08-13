@@ -1,15 +1,17 @@
 package ast.node.stmt;
 
 import ast.AstVisitor;
+import ast.node.def.VarDef;
 import ast.node.expr.Expr;
 import util.error.MyError;
 import util.scope.BaseScope;
 
 public class ForStmt extends Stmt {
   public BaseScope scope;
-  public Stmt init;
+  public VarDef initStmt;
+  public Expr initExpr;
   public Expr condition;
-  public PurExprStmt update;
+  public Expr step;
   public Stmt body;
 
   @Override
