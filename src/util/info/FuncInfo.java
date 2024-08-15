@@ -7,6 +7,7 @@ import java.util.List;
 public final class FuncInfo extends BaseInfo {
   public TypeInfo type;
   public ArrayList<TypeInfo> params;
+  // unused?
   public FuncInfo(String name, TypeInfo type, TypeInfo... params) {
     super(name);
     this.type = type;

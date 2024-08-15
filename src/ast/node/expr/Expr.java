@@ -7,6 +7,7 @@ import util.info.*;
 
 public class Expr extends BaseNode {
   public BaseInfo info;
+  public boolean isLValue;
 
   @Override
   public <T> T accept(AstVisitor<T> visitor) throws MyError {

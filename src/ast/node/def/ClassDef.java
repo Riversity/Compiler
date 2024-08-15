@@ -1,6 +1,7 @@
 package ast.node.def;
 
 import ast.AstVisitor;
+import ast.node.stmt.Block;
 import util.error.MyError;
 import util.info.ClassInfo;
 import util.scope.ClassScope;
@@ -12,7 +13,7 @@ public class ClassDef extends Def {
   public ClassInfo info;
 
   public String name;
-  public FuncDef constructor;
+  public Block constructor;
   public ArrayList<VarDef> vars;
   public ArrayList<FuncDef> funcs;
 

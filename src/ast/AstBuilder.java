@@ -212,6 +212,7 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
     var classDef = new ClassDef();
     classDef.pos = new Position(ctx.start);
     classDef.name = ctx.Identifier().getText();
+    /*
     var con = new FuncDef();
     con.retType = new TypeNode();
     if(ctx.constructor().isEmpty()) {
@@ -232,13 +233,25 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
     }
     else throw new SyntaxError("Illegal constructor", classDef.pos);
     classDef.constructor = con;
+    */
+    if(ctx.constructor().isEmpty()) {
+      classDef.constructor = new Block();
+    }
+    else if(ctx.constructor().size() == 1) {
+      if(classDef.name.equals(ctx.constructor(0).Identifier().getText())) {
+        throw new SyntaxError("Illegal constructor name", classDef.pos);
+      }
+      classDef.constructor = (Block) visit(ctx.constructor(0).block());
+    }
+    else throw new SyntaxError("Too much constructors", classDef.pos);
+
     classDef.vars = new ArrayList<>();
     classDef.funcs = new ArrayList<>();
     classDef.info = new ClassInfo(classDef.name);
     for(var v : ctx.varDef()) {
       var varDef = (VarDef) visit(v);
       classDef.vars.add(varDef);
-      // put into info at semantic check ?
+      // put into info at semantic check
     }
     for(var v : ctx.funcDef()) {
       var funcDef = (FuncDef) visit(v);

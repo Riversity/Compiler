@@ -5,6 +5,6 @@ public final class VarInfo extends BaseInfo {
 
   public VarInfo(String name, TypeInfo type) {
     super(name);
-    this.type = type;
+    this.type = new TypeInfo(type);
   }
 }

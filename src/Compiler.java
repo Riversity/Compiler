@@ -8,9 +8,6 @@ import util.error.TroubleMaker;
 
 public class Compiler {
   public static void main(String[] args) {
-    /* Stream.iterate(1, i -> i + 1)
-        .limit(10)
-        .forEach(System.out::println); */
     if (args.length == 0) {
       System.err.println("Usage: -fsyntax-only <filename>");
       return;

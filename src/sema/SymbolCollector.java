@@ -9,10 +9,8 @@ import ast.node.def.VarDef;
 import ast.node.expr.*;
 import ast.node.stmt.*;
 import util.Position;
+import util.error.*;
 import util.error.InternalError;
-import util.error.InvalidIdentifier;
-import util.error.MyError;
-import util.error.SyntaxError;
 import util.info.TypeInfo;
 import util.info.VarInfo;
 import util.scope.BaseScope;
@@ -35,10 +33,10 @@ public class SymbolCollector implements AstVisitor<String> {
   public void exit() {
     curScope = curScope.parentScope;
   }
-  public void checkType(TypeInfo info) throws MyError {
+  public void checkType(TypeInfo info, Position pos) throws MyError {
     if(!(info.isNative && !Objects.equals(info.name, "null") &&
             !Objects.equals(info.name, "void")) && (globalScope.getClass(info.name) == null)) {
-      throw new InvalidIdentifier("Check type failed", new Position(0, 0));
+      throw new UndefinedIdentifier("Check type failed", pos);
     }
   }
 
@@ -50,10 +48,10 @@ public class SymbolCollector implements AstVisitor<String> {
     enter(globalScope);
     for(var def : node.defs) {
       if(def instanceof ClassDef) {
-        globalScope.insert(((ClassDef) def).info);
+        globalScope.insert(((ClassDef) def).info, node.pos);
       }
       else if(def instanceof FuncDef) {
-        globalScope.insert(((FuncDef) def).info);
+        globalScope.insert(((FuncDef) def).info, node.pos);
       }
     }
     if(globalScope.getFunc("main") == null) {
@@ -74,9 +72,9 @@ public class SymbolCollector implements AstVisitor<String> {
     if(node.name.equals("main") && (!node.retType.info.name.equals("int") || node.retType.info.dimension != 0)) {
       throw new SyntaxError("Main function should have type int", node.pos);
     }
-    if(!node.retType.info.name.equals("void")) checkType(node.retType.info);
+    if(!node.retType.info.name.equals("void")) checkType(node.retType.info, node.pos);
     for(var param : node.params) {
-      curScope.insert(new VarInfo(param.b, param.a.info));
+      curScope.insert(new VarInfo(param.b, param.a.info), node.pos);
     }
     exit();
     return "";
@@ -84,22 +82,22 @@ public class SymbolCollector implements AstVisitor<String> {
   public String visit(ClassDef node) throws MyError {
     node.scope = new ClassScope(curScope, node.info);
     enter(node.scope);
-    for(var v : node.vars) {
-      for(var w : v.list) {
-        curScope.insert(new VarInfo(w.a, v.type.info));
+    for(var varDef : node.vars) {
+      for(var p : varDef.list) {
+        curScope.insert(new VarInfo(p.a, varDef.type.info), node.pos);
       }
     }
-    for(var v : node.funcs) {
-      v.accept(this);
-      curScope.insert(v.info);
+    for(var func : node.funcs) {
+      func.accept(this);
+      curScope.insert(func.info, node.pos);
     }
     exit();
     return "";
   }
   public String visit(VarDef node) throws MyError {
     for(var v : node.list) {
-      checkType(node.type.info);
-      curScope.insert(new VarInfo(v.a, node.type.info));
+      checkType(node.type.info, node.pos);
+      curScope.insert(new VarInfo(v.a, node.type.info), node.pos);
     }
     return "";
   }

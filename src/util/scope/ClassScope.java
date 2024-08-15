@@ -1,6 +1,7 @@
 package util.scope;
 
 import util.Position;
+import util.error.InternalError;
 import util.error.MultipleDefinitions;
 import util.info.*;
 
@@ -14,19 +15,33 @@ public class ClassScope extends BaseScope {
   }
 
   @Override
-  public void insert(BaseInfo info) {
-    if (info instanceof VarInfo) {
-      if (vars.put(info.name, (VarInfo) info) != null)
-        throw new MultipleDefinitions("Variable names repeat", new Position(0, 0));
-    } else if (info instanceof FuncInfo) {
-      if (funcs.put(info.name, (FuncInfo) info) != null)
-        throw new MultipleDefinitions("Function names repeat", new Position(0, 0));
+  public void insert(BaseInfo info, Position pos) {
+    if(info instanceof VarInfo) {
+      if(vars.put(info.name, (VarInfo) info) != null)
+        throw new MultipleDefinitions("Variable names " + info.name + " repeat", pos);
+      if(funcs.containsKey(info.name)) {
+        throw new MultipleDefinitions("Variable and function names " + info.name + " repeat", pos);
+      }
+    } else if(info instanceof FuncInfo) {
+      if(funcs.put(info.name, (FuncInfo) info) != null)
+        throw new MultipleDefinitions("Function names " + info.name + " repeat", pos);
+      if(vars.containsKey(info.name)) {
+        throw new MultipleDefinitions("Function and variable names " + info.name + " repeat", pos);
+      }
     } else {
-      throw new RuntimeException("Wrong Call of GlobalScope::insert");
+      throw new InternalError("Wrong Call of Scope::insert", pos);
     }
   }
 
   public FuncInfo getFunc(String name) {
     return funcs.get(name);
+  }
+
+  @Override
+  public BaseInfo findRecur(String name) {
+    if(vars.containsKey(name)) return vars.get(name);
+    if(funcs.containsKey(name)) return funcs.get(name);
+    if(parentScope != null) return parentScope.findRecur(name);
+    return null;
   }
 }

@@ -5,8 +5,13 @@ public class TypeInfo extends BaseInfo {
   public boolean isNative;
   public TypeInfo(String typeName, int arrayDim) {
     super(typeName);
-    this.isNative = typeName.equals("int") || typeName.equals("bool") || typeName.equals("string") || typeName.equals("void") || typeName.equals("null");
     this.dimension = arrayDim;
+    this.isNative = typeName.equals("int") || typeName.equals("bool") || typeName.equals("string") || typeName.equals("void") || typeName.equals("null");
+  }
+  public TypeInfo(TypeInfo other) {
+    super(other.name);
+    this.dimension = other.dimension;
+    this.isNative = other.isNative;
   }
 
   @Override
