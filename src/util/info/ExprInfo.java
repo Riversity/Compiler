@@ -1,10 +1,10 @@
 package util.info;
 
 public final class ExprInfo extends BaseInfo {
-  private BaseInfo type;
+  private TypeInfo type;
   private boolean isLeftValue;
 
-  public ExprInfo(String name, BaseInfo type, boolean isLVal) {
+  public ExprInfo(String name, TypeInfo type, boolean isLVal) {
     super(name);
     this.type = type;
     this.isLeftValue = isLVal;

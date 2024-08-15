@@ -6,7 +6,7 @@ import util.error.*;
 
 public final class AtomExpr extends Expr {
   public static enum Type {
-    THIS, NULL, TF, ID, DEC, STR, CUSTOM
+    THIS, NULL, TF, DEC, STR, ID, CUSTOM
   }
   public Type atomType;
   public String val;

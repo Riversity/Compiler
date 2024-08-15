@@ -2,6 +2,8 @@ package util.info;
 
 import java.util.HashMap;
 
+
+/* Deprecated */
 public final class ClassInfo extends BaseInfo {
   public HashMap<String, VarInfo> vars;
   public HashMap<String, FuncInfo> funcs;

@@ -10,13 +10,18 @@ import parser.MxBaseVisitor;
 import parser.MxParser;
 import util.Position;
 import util.error.SyntaxError;
+import util.error.TypeMismatch;
+import util.info.FuncInfo;
 import util.info.TypeInfo;
+
+import java.util.ArrayList;
 
 public class AstBuilder extends MxBaseVisitor<BaseNode> {
   @Override
   public BaseNode visitProgram(MxParser.ProgramContext ctx) {
     var program = new Program();
     program.pos = new Position(ctx.start);
+    program.defs = new ArrayList<>();
     // caution scope
     for(var def : ctx.children) {
       if(def instanceof MxParser.VarDefContext ||
@@ -31,6 +36,7 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
   visitBlock(MxParser.BlockContext ctx) {
     var block = new Block();
     block.pos = new Position(ctx.start);
+    block.statements = new ArrayList<>();
     for(var stmt : ctx.children) {
       block.statements.add((Stmt) visit(stmt));
     }
@@ -134,11 +140,12 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
     typeNode.pos = new Position(ctx.start);
     String type = ctx.type.getText();
     typeNode.info = new TypeInfo(type, ctx.bracket().size());
+    typeNode.width = new ArrayList<>();
     boolean flag = false;
     for(var br : ctx.bracket()) {
       if(br.expression() != null) {
         if(flag) throw new SyntaxError
-                ("Illegal initialization", typeNode.pos);
+                ("Illegal initialization in typename", typeNode.pos);
         else {
           flag = true;
           typeNode.width.add((Expr) visit(br.expression()));
@@ -154,6 +161,11 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
     var varDef = new VarDef();
     varDef.pos = new Position(ctx.start);
     varDef.type = (TypeNode) visit(ctx.typeName());
+    // varDef.info = varDef.type.info;
+    varDef.list = new ArrayList<>();
+    if(!varDef.type.width.isEmpty()) {
+      throw new SyntaxError("Variable definition illegal", varDef.pos);
+    }
     for(var term : ctx.varTerm()) {
       var id =  term.Identifier().getText();
       Expr expr = null;
@@ -171,19 +183,24 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
   @Override
   public BaseNode 
   visitFuncDef(MxParser.FuncDefContext ctx) {
-
+    var funcDef = new FuncDef();
+    funcDef.pos = new Position(ctx.start);
+    funcDef.name = ctx.Identifier().getText();
+    funcDef.retType = (TypeNode) visit(ctx.typeName());
+    funcDef.body = (Block) visit(ctx.block());
+    funcDef.params = new ArrayList<>();
+    if(ctx.parameterList() != null) {
+      int i = 0;
+      for (var v : ctx.parameterList().typeName()) {
+        var p = new Pair<>((TypeNode) visit(v),
+                ctx.parameterList().Identifier(i).getText());
+        funcDef.params.add(p);
+        ++i;
+      }
+    }
+    return funcDef;
   }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitParameterList(MxParser.ParameterListContext ctx) {
-
-  }
+  /* visitParameterList */
   /**
    * {@inheritDoc}
    *
@@ -193,65 +210,62 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
   @Override
   public BaseNode 
   visitClassDef(MxParser.ClassDefContext ctx) {
-
+    var classDef = new ClassDef();
+    classDef.pos = new Position(ctx.start);
+    classDef.name = ctx.Identifier().getText();
+    classDef.
   }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
+  /* visitArgumentList */
   @Override
   public BaseNode 
-  visitArgumentList(MxParser.ArgumentListContext ctx) {
-
+  visitSelfExpr(MxParser.SelfExprContext ctx) {
+    var selfExpr = new SelfExpr();
+    selfExpr.pos = new Position(ctx.start);
+    selfExpr.object = (Expr) visit(ctx.expression());
+    selfExpr.op = ctx.op.getText();
+    return selfExpr;
   }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
   @Override
   public BaseNode 
-  visitSelfExpr(MxParser.SelfExprContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
+  visitFunctionExpr(MxParser.FunctionExprContext ctx) {
+    var func = new FuncExpr();
+    func.pos = new Position(ctx.start);
+    func.func = (Expr) visit(ctx.expression());
+    func.args = new ArrayList<>();
+    if(ctx.argumentList() != null) {
+      for(var v : ctx.argumentList().expression()) {
+        func.args.add((Expr) visit(v));
+      }
+    }
+    return func;
+  }
   @Override
   public BaseNode 
-  visitFunctionExpr(MxParser.FunctionExprContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
+  visitMemberExpr(MxParser.MemberExprContext ctx) {
+    var memberExpr = new MemberExpr();
+    memberExpr.pos = new Position(ctx.start);
+    memberExpr.expr = (Expr) visit(ctx.expression());
+    memberExpr.member = ctx.Identifier().getText();
+    return memberExpr;
+  }
   @Override
   public BaseNode 
-  visitMemberExpr(MxParser.MemberExprContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
-  @Override
-  public BaseNode 
-  visitBinaryExpr(MxParser.BinaryExprContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
+  visitBinaryExpr(MxParser.BinaryExprContext ctx) {
+    var binary = new BinaryExpr();
+    binary.pos = new Position(ctx.start);
+    binary.lhs = (Expr) visit(ctx.expression(0));
+    binary.rhs = (Expr) visit(ctx.expression(1));
+    binary.op = ctx.op.getText();
+    return binary;
+  }
   @Override
   public BaseNode 
   visitBracketExpr(MxParser.BracketExprContext ctx) {
-
+    var bracket = new BracketExpr();
+    bracket.pos = new Position(ctx.start);
+    bracket.array = (Expr) visit(ctx.expression(0));
+    bracket.index = (Expr) visit(ctx.expression(1));
+    return bracket;
   }
   @Override
   public BaseNode 
@@ -277,25 +291,24 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
     else if(ctx.StringConst() != null) atom.atomType = AtomExpr.Type.STR;
     return atom;
   }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
   @Override
   public BaseNode 
-  visitUnaryExpr(MxParser.UnaryExprContext ctx) { return visitChildren(ctx); }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
+  visitUnaryExpr(MxParser.UnaryExprContext ctx) {
+    var unaryExpr = new UnaryExpr();
+    unaryExpr.pos = new Position(ctx.start);
+    unaryExpr.op = ctx.op.getText();
+    unaryExpr.object = (Expr) visit(ctx.expression());
+    return unaryExpr;
+  }
   @Override
   public BaseNode 
   visitNewType(MxParser.NewTypeContext ctx) {
-
+    var newExpr = new NewExpr();
+    newExpr.pos = new Position(ctx.start);
+    newExpr.type = (TypeNode) visit(ctx.typeName());
+    newExpr.init = ctx.literalMultiList() != null ?
+            (LiteralML) visit(ctx.literalMultiList()) : null;
+    return newExpr;
   }
   @Override
   public BaseNode 
@@ -319,7 +332,65 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
   @Override
   public BaseNode 
   visitLiteralMultiList(MxParser.LiteralMultiListContext ctx) {
-
+    var literalML = new LiteralML();
+    literalML.pos = new Position(ctx.start);
+    if(ctx.literalList() != null) {
+      literalML.atomList = new ArrayList<>();
+      if(ctx.literalList().literalAtom().isEmpty()) {
+        // {}
+        literalML.dimension = -1;
+        literalML.type = LiteralML.Type.ANY;
+        return literalML;
+      }
+      else {
+        // {1, 2}
+        literalML.dimension = 1;
+        if(ctx.literalList().literalAtom(0).Decimal() != null) {
+          literalML.type = LiteralML.Type.DEC;
+          for(var v : ctx.literalList().literalAtom()) {
+            if(v.Decimal() == null) {
+              throw new TypeMismatch("Wrong type in array const", literalML.pos);
+            }
+            literalML.atomList.add(v.getText());
+          }
+        }
+        else if(ctx.literalList().literalAtom(0).StringConst() != null) {
+          literalML.type = LiteralML.Type.STR;
+          for(var v : ctx.literalList().literalAtom()) {
+            if(v.StringConst() == null) {
+              throw new TypeMismatch("Wrong type in array const", literalML.pos);
+            }
+            literalML.atomList.add(v.getText());
+          }
+        }
+        else if(ctx.literalList().literalAtom(0).Null() != null) {
+          literalML.type = LiteralML.Type.NULL;
+          for(var v : ctx.literalList().literalAtom()) {
+            if(v.Null() == null) {
+              throw new TypeMismatch("Wrong type in array const", literalML.pos);
+            }
+            literalML.atomList.add(v.getText());
+          }
+        }
+        else {
+          literalML.type = LiteralML.Type.TF;
+          for(var v : ctx.literalList().literalAtom()) {
+            if(v.True() == null && v.False() == null) {
+              throw new TypeMismatch("Wrong type in array const", literalML.pos);
+            }
+            literalML.atomList.add(v.getText());
+          }
+        }
+      }
+    }
+    else {
+      literalML.list = new ArrayList<>();
+      literalML.type = LiteralML.Type.UNKNOWN;
+      for(var v : ctx.literalMultiList()) {
+        literalML.list.add((LiteralML) visit(v));
+      }
+    }
+    return literalML;
   }
   /* literalList */
   /* literalAtom */

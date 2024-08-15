@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 public class ClassDef extends Def {
   public ClassScope classScope;
-  public ClassInfo classInfo;
 
+  public String name;
   public FuncDef constructor;
   public ArrayList<VarDef> vars;
   public ArrayList<FuncDef> funcs;

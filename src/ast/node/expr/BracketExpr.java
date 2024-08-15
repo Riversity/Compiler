@@ -4,8 +4,8 @@ import ast.AstVisitor;
 import util.error.MyError;
 
 public class BracketExpr extends Expr {
-  Expr array;
-  Expr index;
+  public Expr array;
+  public Expr index;
 
   @Override
   public <T> T accept(AstVisitor<T> visitor) throws MyError {

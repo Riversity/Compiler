@@ -2,6 +2,7 @@ package ast.node.def;
 
 import ast.node.BaseNode;
 import ast.*;
+import ast.node.TypeNode;
 import util.error.MyError;
 import util.info.BaseInfo;
 
