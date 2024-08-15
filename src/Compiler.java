@@ -1,6 +1,9 @@
-import ast.node.BaseNode;
+import ast.AstBuilder;
+import ast.node.*;
 import org.antlr.v4.runtime.*;
 import parser.*;
+import sema.SymbolCollector;
+import util.error.MyError;
 import util.error.TroubleMaker;
 
 public class Compiler {
@@ -9,15 +12,15 @@ public class Compiler {
         .limit(10)
         .forEach(System.out::println); */
     if (args.length == 0) {
-      System.out.println("Usage: -fsyntax-only <filename>");
+      System.err.println("Usage: -fsyntax-only <filename>");
       return;
     } else if (args[0].equals("-fsyntax-only")) {
-        System.out.println("Semantic check");
+        System.err.println("Semantic check");
     } else if (args[0].equals("-S")) {
-        System.out.println("Generate assembly code");
+        System.err.println("Generate assembly code");
         return;
     } else {
-        System.out.println("Unknown option");
+        System.err.println("Unknown option");
         return;
     }
     try {
@@ -29,16 +32,20 @@ public class Compiler {
       MxParser parser = new MxParser(tokens);
       parser.removeErrorListeners();
       parser.addErrorListener(new TroubleMaker());
-      parser.program();
+      BaseNode program = new AstBuilder().visit(parser.program());
+      SymbolCollector collector = new SymbolCollector();
+      collector.visit((Program) program);
       // BaseNode program = new ASTBuilder().visit(parser.program());
       // symbol collector
       // type checker
     } catch (Exception e) {
       System.err.println(e.toString());
-
+      if(e instanceof MyError) {
+        System.out.println(((MyError) e).printError());
+      }
       System.exit(1);
     } finally {
-      System.out.println("Compile successfully");
+      System.err.println("Compile successfully");
       System.exit(0);
     }
   }

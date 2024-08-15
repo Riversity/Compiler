@@ -8,7 +8,7 @@ public class SyntaxError extends MyError {
   }
 
   @Override
-  public String PrintError() {
+  public String printError() {
     return "Syntax Error";
   }
 }

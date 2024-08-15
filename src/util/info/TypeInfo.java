@@ -1,8 +1,8 @@
 package util.info;
 
 public class TypeInfo extends BaseInfo {
-  private int dimension;
-  private boolean isNative;
+  public int dimension;
+  public boolean isNative;
   public TypeInfo(String typeName, int arrayDim) {
     super(typeName);
     this.isNative = typeName.equals("int") || typeName.equals("bool") || typeName.equals("string") || typeName.equals("void") || typeName.equals("null");

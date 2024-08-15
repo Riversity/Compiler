@@ -8,7 +8,7 @@ public class InvalidIdentifier extends MyError {
   }
 
   @Override
-  public String PrintError() {
+  public String printError() {
     return "Invalid Identifier";
   }
 }

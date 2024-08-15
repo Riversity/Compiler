@@ -11,10 +11,13 @@ import parser.MxParser;
 import util.Position;
 import util.error.SyntaxError;
 import util.error.TypeMismatch;
+import util.info.ClassInfo;
 import util.info.FuncInfo;
 import util.info.TypeInfo;
+import util.info.VarInfo;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class AstBuilder extends MxBaseVisitor<BaseNode> {
   @Override
@@ -147,9 +150,11 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
         if(flag) throw new SyntaxError
                 ("Illegal initialization in typename", typeNode.pos);
         else {
-          flag = true;
           typeNode.width.add((Expr) visit(br.expression()));
         }
+      }
+      else {
+        flag = true;
       }
     }
     return typeNode;
@@ -198,22 +203,49 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
         ++i;
       }
     }
+    funcDef.info = new FuncInfo(funcDef.name, funcDef.retType.info);
     return funcDef;
   }
-  /* visitParameterList */
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling
-   * {@link #visitChildren} on {@code ctx}.</p>
-   */
   @Override
   public BaseNode 
   visitClassDef(MxParser.ClassDefContext ctx) {
     var classDef = new ClassDef();
     classDef.pos = new Position(ctx.start);
     classDef.name = ctx.Identifier().getText();
-    classDef.
+    var con = new FuncDef();
+    con.retType = new TypeNode();
+    if(ctx.constructor().isEmpty()) {
+      con.retType.width = null;
+      con.retType.info = new TypeInfo("void", 0);
+      con.name = classDef.name;
+      con.body = new Block();
+      // Seems buggy here
+    }
+    else if(ctx.constructor().size() == 1) {
+      con.retType.width = null;
+      con.retType.info = new TypeInfo("void", 0);
+      con.name = ctx.constructor(0).Identifier().getText();
+      if(!Objects.equals(classDef.name, con.name)) {
+        throw new SyntaxError("Illegal constructor", classDef.pos);
+      }
+      con.body = (Block) visit(ctx.constructor(0).block());
+    }
+    else throw new SyntaxError("Illegal constructor", classDef.pos);
+    classDef.constructor = con;
+    classDef.vars = new ArrayList<>();
+    classDef.funcs = new ArrayList<>();
+    classDef.info = new ClassInfo(classDef.name);
+    for(var v : ctx.varDef()) {
+      var varDef = (VarDef) visit(v);
+      classDef.vars.add(varDef);
+      // put into info at semantic check ?
+    }
+    for(var v : ctx.funcDef()) {
+      var funcDef = (FuncDef) visit(v);
+      classDef.funcs.add(funcDef);
+      classDef.info.funcs.put(funcDef.name, funcDef.info);
+    }
+    return classDef;
   }
   /* visitArgumentList */
   @Override

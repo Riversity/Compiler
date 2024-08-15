@@ -8,7 +8,7 @@ public class InvalidControlFlow extends MyError {
   }
 
   @Override
-  public String PrintError() {
+  public String printError() {
     return "Invalid Control Flow";
   }
 }

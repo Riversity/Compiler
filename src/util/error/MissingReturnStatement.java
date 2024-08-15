@@ -8,7 +8,7 @@ public class MissingReturnStatement extends MyError {
   }
 
   @Override
-  public String PrintError() {
+  public String printError() {
     return "Missing Return Statement";
   }
 }

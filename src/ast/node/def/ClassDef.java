@@ -8,7 +8,8 @@ import util.scope.ClassScope;
 import java.util.ArrayList;
 
 public class ClassDef extends Def {
-  public ClassScope classScope;
+  public ClassScope scope;
+  public ClassInfo info;
 
   public String name;
   public FuncDef constructor;

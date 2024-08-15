@@ -8,7 +8,7 @@ public class TypeMismatch extends MyError {
   }
 
   @Override
-  public String PrintError() {
+  public String printError() {
     return "Type Mismatch";
   }
 }

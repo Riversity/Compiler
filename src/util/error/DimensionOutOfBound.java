@@ -8,7 +8,7 @@ public class DimensionOutOfBound extends MyError {
   }
 
   @Override
-  public String PrintError() {
+  public String printError() {
     return "Dimension Out Of Bound";
   }
 }

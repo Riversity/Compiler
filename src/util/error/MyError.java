@@ -3,7 +3,7 @@ package util.error;
 import util.Position;
 
 abstract public class MyError extends RuntimeException {
-  public abstract String PrintError();
+  public abstract String printError();
   private final String message;
   private final Position pos;
   public MyError(String message, Position pos) {

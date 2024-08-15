@@ -8,7 +8,7 @@ public class UndefinedIdentifier extends MyError {
   }
 
   @Override
-  public String PrintError() {
+  public String printError() {
     return "Undefined Identifier";
   }
 }
