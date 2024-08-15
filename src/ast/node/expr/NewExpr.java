@@ -1,12 +1,13 @@
 package ast.node.expr;
 
 import ast.AstVisitor;
+import ast.node.TypeNode;
 import util.error.MyError;
 import util.info.TypeInfo;
 
 public class NewExpr extends Expr {
-  TypeInfo type;
-  LiteralML init;
+  public TypeNode type;
+  public LiteralML init;
 
   @Override
   public <T> T accept(AstVisitor<T> visitor) throws MyError {

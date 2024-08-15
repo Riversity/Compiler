@@ -34,7 +34,8 @@ public class Compiler {
       // symbol collector
       // type checker
     } catch (Exception e) {
-      System.out.println(e.toString());
+      System.err.println(e.toString());
+
       System.exit(1);
     } finally {
       System.out.println("Compile successfully");

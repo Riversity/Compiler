@@ -1,0 +1,14 @@
+package util.error;
+
+import util.Position;
+
+public class DimensionOutOfBound extends MyError {
+  public DimensionOutOfBound(String msg, Position pos) {
+    super("Dimension Out Of Bound: " + msg, pos);
+  }
+
+  @Override
+  public String PrintError() {
+    return "Dimension Out Of Bound";
+  }
+}

@@ -10,6 +10,6 @@ public class TroubleMaker extends BaseErrorListener {
                           int line, int charPositionInLine,
                           String msg,
                           RecognitionException e) {
-    throw new SyntaxError(msg, new Position(line, charPositionInLine));
+    throw new InvalidIdentifier(msg, new Position(line, charPositionInLine));
   }
 }
