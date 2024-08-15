@@ -25,10 +25,11 @@ bracket : '[' expression? ']';
 varDef : typeName varTerm (',' varTerm)*;
 varTerm : Identifier ('=' (literalMultiList | expression))?;
 
-funcDef : typeName? Identifier '(' parameterList? ')' block;
+funcDef : typeName Identifier '(' parameterList? ')' block;
 parameterList : typeName Identifier (',' typeName Identifier)*;
 
-classDef : Class Identifier '{' (varDef ';' | funcDef)* '}' ';' ;
+classDef : Class Identifier '{' (varDef ';' | funcDef | constructor)* '}' ';' ;
+constructor : Identifier '(' ')' block;
 
 argumentList : expression (',' expression)*;
 
