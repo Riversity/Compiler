@@ -89,6 +89,9 @@ public class SymbolCollector implements AstVisitor<String> {
     }
     for(var func : node.funcs) {
       func.accept(this);
+      if(func.name.equals(node.name)) {
+        throw new SyntaxError("Constructor should not have type", func.pos);
+      }
       curScope.insert(func.info, node.pos);
     }
     exit();

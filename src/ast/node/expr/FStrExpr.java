@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class FStrExpr extends Expr {
   public String fHead;
   public ArrayList<String> fBody;
+  public ArrayList<Expr> exprs;
   public String fTail;
   public String fAtom;
 

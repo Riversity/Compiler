@@ -2,6 +2,7 @@ import ast.AstBuilder;
 import ast.node.*;
 import org.antlr.v4.runtime.*;
 import parser.*;
+import sema.SemanticChecker;
 import sema.SymbolCollector;
 import util.error.MyError;
 import util.error.TroubleMaker;
@@ -10,15 +11,12 @@ public class Compiler {
   public static void main(String[] args) {
     if (args.length == 0) {
       System.err.println("Usage: -fsyntax-only <filename>");
-      return;
     } else if (args[0].equals("-fsyntax-only")) {
-        System.err.println("Semantic check");
+      System.err.println("Semantic check");
     } else if (args[0].equals("-S")) {
-        System.err.println("Generate assembly code");
-        return;
+      System.err.println("Generate assembly code");
     } else {
-        System.err.println("Unknown option");
-        return;
+      System.err.println("Unknown option");
     }
     try {
       var input = CharStreams.fromStream(System.in);
@@ -32,9 +30,9 @@ public class Compiler {
       BaseNode program = new AstBuilder().visit(parser.program());
       SymbolCollector collector = new SymbolCollector();
       collector.visit((Program) program);
-      // BaseNode program = new ASTBuilder().visit(parser.program());
-      // symbol collector
-      // type checker
+      System.err.println("Collection finished");
+      SemanticChecker checker = new SemanticChecker();
+      checker.visit((Program) program);
     } catch (Exception e) {
       System.err.println(e.toString());
       if(e instanceof MyError) {

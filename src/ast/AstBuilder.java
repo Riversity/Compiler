@@ -17,6 +17,7 @@ import util.info.TypeInfo;
 import util.info.VarInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class AstBuilder extends MxBaseVisitor<BaseNode> {
@@ -39,8 +40,7 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
   visitBlock(MxParser.BlockContext ctx) {
     var block = new Block();
     block.pos = new Position(ctx.start);
-    block.statements = new ArrayList<>();
-    for(var stmt : ctx.children) {
+    for(var stmt : ctx.statement()) {
       block.statements.add((Stmt) visit(stmt));
     }
     return block;
@@ -194,16 +194,19 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
     funcDef.retType = (TypeNode) visit(ctx.typeName());
     funcDef.body = (Block) visit(ctx.block());
     funcDef.params = new ArrayList<>();
+    ArrayList<TypeInfo> tmp = new ArrayList<>();
     if(ctx.parameterList() != null) {
       int i = 0;
       for (var v : ctx.parameterList().typeName()) {
-        var p = new Pair<>((TypeNode) visit(v),
+        var type = (TypeNode) visit(v);
+        var p = new Pair<>(type,
                 ctx.parameterList().Identifier(i).getText());
         funcDef.params.add(p);
+        tmp.add(new TypeInfo(type.info));
         ++i;
       }
     }
-    funcDef.info = new FuncInfo(funcDef.name, funcDef.retType.info);
+    funcDef.info = new FuncInfo(funcDef.name, funcDef.retType.info, tmp);
     return funcDef;
   }
   @Override
@@ -238,7 +241,7 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
       classDef.constructor = new Block();
     }
     else if(ctx.constructor().size() == 1) {
-      if(classDef.name.equals(ctx.constructor(0).Identifier().getText())) {
+      if(!classDef.name.equals(ctx.constructor(0).Identifier().getText())) {
         throw new SyntaxError("Illegal constructor name", classDef.pos);
       }
       classDef.constructor = (Block) visit(ctx.constructor(0).block());
@@ -251,7 +254,11 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
     for(var v : ctx.varDef()) {
       var varDef = (VarDef) visit(v);
       classDef.vars.add(varDef);
-      // put into info at semantic check
+      var tmpInfo = varDef.type.info;
+      for(var p : varDef.list) {
+        var varInfo = new VarInfo(p.a, tmpInfo);
+        classDef.info.vars.put(p.a, varInfo);
+      }
     }
     for(var v : ctx.funcDef()) {
       var funcDef = (FuncDef) visit(v);
@@ -449,10 +456,15 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
       fStr.fAtom = ctx.FAtom().getText();
     }
     else {
+      fStr.fBody = new ArrayList<>();
+      fStr.exprs = new ArrayList<>();
       fStr.fHead = ctx.FHead().getText();
       fStr.fTail = ctx.FTail().getText();
-      for (var body : ctx.FBody()) {
+      for(var body : ctx.FBody()) {
         fStr.fBody.add(body.getText());
+      }
+      for(var expr : ctx.expression()) {
+        fStr.exprs.add((Expr) visit(expr));
       }
     }
     return fStr;
