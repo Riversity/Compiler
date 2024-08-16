@@ -1,6 +1,6 @@
 JAVA_SRC = $(shell find src -name '*.java')
 
-ANTLR_JAR = /usr/share/java/antlr-4.13.2-complete.jar
+ANTLR_JAR = /ulib/antlr-4.13.1-complete.jar
 
 .PHONY: all
 all: Compiler

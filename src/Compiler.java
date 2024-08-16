@@ -30,7 +30,6 @@ public class Compiler {
       BaseNode program = new AstBuilder().visit(parser.program());
       SymbolCollector collector = new SymbolCollector();
       collector.visit((Program) program);
-      System.err.println("Collection finished");
       SemanticChecker checker = new SemanticChecker();
       checker.visit((Program) program);
     } catch (Exception e) {

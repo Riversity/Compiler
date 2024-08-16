@@ -19,6 +19,8 @@ import util.scope.GlobalScope;
 
 import java.util.Objects;
 
+import static util.Native.intType;
+
 public class SymbolCollector implements AstVisitor<String> {
   private GlobalScope globalScope;
   private BaseScope curScope;
@@ -56,6 +58,9 @@ public class SymbolCollector implements AstVisitor<String> {
     }
     if(globalScope.getFunc("main") == null) {
       throw new SyntaxError("No main function", node.pos);
+    }
+    else if(!globalScope.getFunc("main").params.isEmpty() || !globalScope.getFunc("main").type.equals(intType)) {
+      throw new SyntaxError("Main function definition error", node.pos);
     }
     for(var def : node.defs) {
       if(def instanceof ClassDef || def instanceof FuncDef) {

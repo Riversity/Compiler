@@ -88,13 +88,13 @@ public class SemanticChecker implements AstVisitor<String> {
   public String visit(VarDef node) throws MyError {
     checkType(node.type.info, node.pos);
     for(var p : node.list) {
-      curScope.insert(new VarInfo(p.a, node.type.info), node.pos);
       if(p.b != null) {
         p.b.accept(this);
         if(!node.type.info.equals(p.b.info)) {
           throw new TypeMismatch("Cannot assign " + p.b.info.name + " to " + p.a, node.pos);
         }
       }
+      curScope.insert(new VarInfo(p.a, node.type.info), node.pos);
     }
     return "";
   }
@@ -267,6 +267,12 @@ public class SemanticChecker implements AstVisitor<String> {
     node.info = node.type.info;
     node.isLValue = true;
     checkType(node.type.info, node.pos);
+    for(var expr : node.type.width) {
+      expr.accept(this);
+      if(!intType.equals(expr.info)) {
+        throw new InvalidType("Index must be integer", node.pos);
+      }
+    }
     if(node.type.info.isNative && node.type.info.dimension == 0) {
       throw new InvalidType("Cannot create native type", node.pos);
     }

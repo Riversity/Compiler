@@ -31,15 +31,15 @@ public class GlobalScope extends BaseScope {
       if(funcs.containsKey(info.name)) {
         throw new MultipleDefinitions("Variable and function names " + info.name + " repeat", pos);
       }
-      if(classes.containsKey(info.name)) {
-        throw new MultipleDefinitions("Variable and class names " + info.name + " repeat", pos);
-      }
     }
     else if(info instanceof FuncInfo) {
       if(funcs.put(info.name, (FuncInfo) info) != null)
         throw new MultipleDefinitions("Function names " + info.name + " repeat", pos);
       if(vars.containsKey(info.name)) {
         throw new MultipleDefinitions("Function and variable names " + info.name + " repeat", pos);
+      }
+      if(classes.containsKey(info.name)) {
+        throw new MultipleDefinitions("Function and class names " + info.name + " repeat", pos);
       }
     }
     else if(info instanceof ClassInfo) {
