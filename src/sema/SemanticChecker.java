@@ -27,11 +27,13 @@ public class SemanticChecker implements AstVisitor<String> {
   private int loopDepth;
   private String currentClass;
   private TypeInfo funcRetType;
+  private boolean isRet;
 
   public SemanticChecker() {
     loopDepth = 0;
     currentClass = null;
     funcRetType = null;
+    isRet = false;
   }
   public void enter(BaseScope scope) {
     if(globalScope == null) globalScope = (GlobalScope) scope;
@@ -66,9 +68,10 @@ public class SemanticChecker implements AstVisitor<String> {
     for(var stmt : node.body.statements) {
       stmt.accept(this);
     }
-    // if(!node.name.equals("main") && !node.retType.info.name.equals("void")) {
-      // Check return
-    // }
+    if(!node.name.equals("main") && !node.retType.info.name.equals("void")) {
+      if(!isRet) throw new MissingReturnStatement("Missing Return Statement", node.pos);
+    }
+    isRet = false;
     funcRetType = null;
     exit();
     return "";
@@ -221,7 +224,7 @@ public class SemanticChecker implements AstVisitor<String> {
       for(int i = 0; i < f.params.size(); ++i) {
         node.args.get(i).accept(this);
         if(!f.params.get(i).equals(node.args.get(i).info)) {
-          throw new InvalidType("Argument " + (i + 1) + " of wrong type", node.pos);
+          throw new TypeMismatch("Argument " + (i + 1) + " of wrong type", node.pos);
         }
       }
       node.info = new TypeInfo(f.type);
@@ -433,6 +436,7 @@ public class SemanticChecker implements AstVisitor<String> {
     return "";
   }
   public String visit(RetStmt node) throws MyError {
+    isRet = true;
     if(funcRetType == null) {
       throw new InvalidControlFlow("Return outside function", node.pos);
     }
