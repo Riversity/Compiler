@@ -17,6 +17,7 @@ import util.scope.GlobalScope;
 
 import java.util.Objects;
 
+import static java.lang.Math.abs;
 import static util.Native.*;
 
 
@@ -276,7 +277,12 @@ public class SemanticChecker implements AstVisitor<String> {
     if(node.type.info.isNative && node.type.info.dimension == 0) {
       throw new InvalidType("Cannot create native type", node.pos);
     }
-    /* LiteralML!!! */
+    if(node.init != null) {
+      node.init.accept(this);
+      if(!node.init.info.equals(node.info)) {
+        throw new TypeMismatch("New type mismatch", node.pos);
+      }
+    }
     return "";
   }
   public String visit(BinaryExpr node) throws MyError {
@@ -323,7 +329,16 @@ public class SemanticChecker implements AstVisitor<String> {
     return "";
   }
   public String visit(LiteralML node) throws MyError {
-    // !!!!!
+    int dim = 0;
+    String typeName = "int";
+    if(node.atomList != null) {
+      dim = 1;
+    }
+    else if(!node.list.isEmpty()) {
+      dim = node.list.get(0).dimension + 1;
+    }
+    node.info = new TypeInfo(typeName, dim);
+    node.isLValue = false;
     return "";
   }
   public String visit(AssignExpr node) throws MyError {
