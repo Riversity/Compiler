@@ -221,7 +221,7 @@ public class SemanticChecker implements AstVisitor<String> {
       for(int i = 0; i < f.params.size(); ++i) {
         node.args.get(i).accept(this);
         if(!f.params.get(i).equals(node.args.get(i).info)) {
-          throw new TypeMismatch("Argument " + (i + 1) + " of wrong type", node.pos);
+          throw new InvalidType("Argument " + (i + 1) + " of wrong type", node.pos);
         }
       }
       node.info = new TypeInfo(f.type);
