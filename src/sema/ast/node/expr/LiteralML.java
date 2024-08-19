@@ -12,7 +12,7 @@ public class LiteralML extends Expr {
   public Type type;
   public ArrayList<String> atomList;
   public ArrayList<LiteralML> list;
-  public int dimension;
+  // public int dimension; // record in type info
 
   @Override
   public <T> T accept(AstVisitor<T> visitor) throws MyError {

@@ -390,13 +390,11 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
       literalML.atomList = new ArrayList<>();
       if(ctx.literalList().literalAtom().isEmpty()) {
         // {}
-        literalML.dimension = -1;
         literalML.type = LiteralML.Type.ANY;
         return literalML;
       }
       else {
         // {1, 2}
-        literalML.dimension = 1;
         if(ctx.literalList().literalAtom(0).Decimal() != null) {
           literalML.type = LiteralML.Type.DEC;
           for(var v : ctx.literalList().literalAtom()) {
