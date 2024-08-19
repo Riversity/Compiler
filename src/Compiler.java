@@ -1,11 +1,12 @@
-import ast.AstBuilder;
-import ast.node.*;
 import org.antlr.v4.runtime.*;
 import parser.*;
+import sema.ast.AstBuilder;
 import sema.SemanticChecker;
 import sema.SymbolCollector;
-import util.error.MyError;
-import util.error.TroubleMaker;
+import sema.ast.node.BaseNode;
+import sema.ast.node.Program;
+import sema.util.error.MyError;
+import sema.util.error.TroubleMaker;
 
 public class Compiler {
   public static void main(String[] args) {

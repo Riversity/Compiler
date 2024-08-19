@@ -1,10 +1,13 @@
-package ast;
+package sema.ast;
 
-import ast.node.*;
-import ast.node.def.*;
-import ast.node.expr.*;
-import ast.node.stmt.*;
-import util.error.MyError;
+import sema.ast.node.BaseNode;
+import sema.ast.node.Program;
+import sema.ast.node.def.ClassDef;
+import sema.ast.node.def.FuncDef;
+import sema.ast.node.def.VarDef;
+import sema.ast.node.expr.*;
+import sema.ast.node.stmt.*;
+import sema.util.error.MyError;
 
 public interface AstVisitor<T> {
   public T visit(BaseNode node) throws MyError;

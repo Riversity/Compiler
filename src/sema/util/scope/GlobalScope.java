@@ -1,14 +1,15 @@
-package util.scope;
+package sema.util.scope;
 
-import util.Position;
-import util.error.InternalError;
-import util.error.MultipleDefinitions;
-import util.info.*;
+import sema.util.Native;
+import sema.util.Position;
+import sema.util.info.BaseInfo;
+import sema.util.error.InternalError;
+import sema.util.error.MultipleDefinitions;
+import sema.util.info.ClassInfo;
+import sema.util.info.FuncInfo;
+import sema.util.info.VarInfo;
 
 import java.util.HashMap;
-
-import static util.Native.nativeFuncs;
-import static util.Native.stringClass;
 
 public class GlobalScope extends BaseScope {
   HashMap<String, FuncInfo> funcs;
@@ -17,10 +18,10 @@ public class GlobalScope extends BaseScope {
     super(null, null);
     funcs = new HashMap<String, FuncInfo>();
     classes = new HashMap<String, ClassInfo>();
-    for (FuncInfo func : nativeFuncs) {
+    for (FuncInfo func : Native.nativeFuncs) {
       funcs.put(func.name, func);
     }
-    classes.put("string", stringClass);
+    classes.put("string", Native.stringClass);
   }
 
   @Override

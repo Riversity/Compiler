@@ -1,6 +1,6 @@
-package util.error;
+package sema.util.error;
 
-import util.Position;
+import sema.util.Position;
 
 public class InvalidType extends MyError {
   public InvalidType(String msg, Position pos) {

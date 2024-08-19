@@ -1,6 +1,6 @@
-package util.error;
+package sema.util.error;
 
-import util.Position;
+import sema.util.Position;
 
 public class TypeMismatch extends MyError {
   public TypeMismatch(String msg, Position pos) {

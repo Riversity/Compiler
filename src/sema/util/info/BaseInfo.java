@@ -1,4 +1,4 @@
-package util.info;
+package sema.util.info;
 
 public abstract class BaseInfo {
   public String name;

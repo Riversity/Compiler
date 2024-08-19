@@ -1,4 +1,4 @@
-package util.info;
+package sema.util.info;
 
 import java.util.HashMap;
 

@@ -1,10 +1,10 @@
-package ast.node.def;
+package sema.ast.node.def;
 
-import ast.AstVisitor;
-import ast.node.stmt.Block;
-import util.error.MyError;
-import util.info.ClassInfo;
-import util.scope.ClassScope;
+import sema.ast.AstVisitor;
+import sema.ast.node.stmt.Block;
+import sema.util.error.MyError;
+import sema.util.info.ClassInfo;
+import sema.util.scope.ClassScope;
 
 import java.util.ArrayList;
 

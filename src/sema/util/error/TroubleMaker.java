@@ -1,7 +1,7 @@
-package util.error;
+package sema.util.error;
 
 import org.antlr.v4.runtime.*;
-import util.Position;
+import sema.util.Position;
 
 public class TroubleMaker extends BaseErrorListener {
   @Override

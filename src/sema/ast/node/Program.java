@@ -1,9 +1,9 @@
-package ast.node;
+package sema.ast.node;
 
-import ast.AstVisitor;
-import ast.node.def.Def;
-import util.error.MyError;
-import util.scope.GlobalScope;
+import sema.ast.AstVisitor;
+import sema.ast.node.def.Def;
+import sema.util.error.MyError;
+import sema.util.scope.GlobalScope;
 
 import java.util.ArrayList;
 

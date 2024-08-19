@@ -1,9 +1,8 @@
-package util;
+package sema.util;
 
-import util.info.*;
-
-import java.util.Arrays;
-import java.util.Collections;
+import sema.util.info.ClassInfo;
+import sema.util.info.FuncInfo;
+import sema.util.info.TypeInfo;
 /* Built-in Types and Functions */
 
 public interface Native {

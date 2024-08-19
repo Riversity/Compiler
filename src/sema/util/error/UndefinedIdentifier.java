@@ -1,6 +1,6 @@
-package util.error;
+package sema.util.error;
 
-import util.Position;
+import sema.util.Position;
 
 public class UndefinedIdentifier extends MyError {
   public UndefinedIdentifier(String msg, Position pos) {

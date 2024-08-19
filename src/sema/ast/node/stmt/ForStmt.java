@@ -1,10 +1,10 @@
-package ast.node.stmt;
+package sema.ast.node.stmt;
 
-import ast.AstVisitor;
-import ast.node.def.VarDef;
-import ast.node.expr.Expr;
-import util.error.MyError;
-import util.scope.BaseScope;
+import sema.ast.AstVisitor;
+import sema.ast.node.def.VarDef;
+import sema.ast.node.expr.Expr;
+import sema.util.error.MyError;
+import sema.util.scope.BaseScope;
 
 public class ForStmt extends Stmt {
   public BaseScope scope;

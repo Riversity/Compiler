@@ -1,9 +1,8 @@
-package ast.node.expr;
+package sema.ast.node.expr;
 
-import ast.AstVisitor;
-import ast.node.TypeNode;
-import util.error.MyError;
-import util.info.TypeInfo;
+import sema.ast.AstVisitor;
+import sema.ast.node.TypeNode;
+import sema.util.error.MyError;
 
 public class NewExpr extends Expr {
   public TypeNode type;

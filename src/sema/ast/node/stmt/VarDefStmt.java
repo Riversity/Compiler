@@ -1,8 +1,8 @@
-package ast.node.stmt;
+package sema.ast.node.stmt;
 
-import ast.AstVisitor;
-import ast.node.def.VarDef;
-import util.error.MyError;
+import sema.ast.AstVisitor;
+import sema.ast.node.def.VarDef;
+import sema.util.error.MyError;
 
 public class VarDefStmt extends Stmt {
   public VarDef def;

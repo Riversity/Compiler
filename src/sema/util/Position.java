@@ -1,4 +1,4 @@
-package util;
+package sema.util;
 
 import org.antlr.v4.runtime.Token;
 

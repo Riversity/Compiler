@@ -1,24 +1,24 @@
 package sema;
 
-import ast.AstVisitor;
-import ast.node.BaseNode;
-import ast.node.Program;
-import ast.node.def.ClassDef;
-import ast.node.def.FuncDef;
-import ast.node.def.VarDef;
-import ast.node.expr.*;
-import ast.node.stmt.*;
-import util.Position;
-import util.error.*;
-import util.error.InternalError;
-import util.info.*;
-import util.scope.BaseScope;
-import util.scope.GlobalScope;
+import sema.ast.AstVisitor;
+import sema.ast.node.BaseNode;
+import sema.ast.node.Program;
+import sema.ast.node.def.ClassDef;
+import sema.ast.node.def.FuncDef;
+import sema.ast.node.def.VarDef;
+import sema.ast.node.expr.*;
+import sema.ast.node.stmt.*;
+import sema.util.Position;
+import sema.util.error.*;
+import sema.util.error.InternalError;
+import sema.util.info.*;
+import sema.util.scope.BaseScope;
+import sema.util.scope.GlobalScope;
 
 import java.util.Objects;
 
-import static java.lang.Math.abs;
-import static util.Native.*;
+import static java.lang.Math.*;
+import static sema.util.Native.*;
 
 
 public class SemanticChecker implements AstVisitor<String> {
@@ -95,7 +95,7 @@ public class SemanticChecker implements AstVisitor<String> {
       if(p.b != null) {
         p.b.accept(this);
         if(!node.type.info.equals(p.b.info)) {
-          throw new TypeMismatch("Cannot assign " + p.b.info.name + " to " + p.a, node.pos);
+          throw new TypeMismatch("Cannot assign " + p.b.info.name + " type to " + p.a, node.pos);
         }
       }
       curScope.insert(new VarInfo(p.a, node.type.info), node.pos);
@@ -282,7 +282,7 @@ public class SemanticChecker implements AstVisitor<String> {
     }
     if(node.init != null) {
       node.init.accept(this);
-      if(!node.init.info.equals(node.info)) {
+      if(!node.type.info.equals(node.init.info)) {
         throw new TypeMismatch("New type mismatch", node.pos);
       }
     }
@@ -332,13 +332,48 @@ public class SemanticChecker implements AstVisitor<String> {
     return "";
   }
   public String visit(LiteralML node) throws MyError {
-    int dim = 0;
+    int dim;
     String typeName = "int";
     if(node.atomList != null) {
       dim = 1;
+      switch(node.type) {
+        case TF: typeName = "bool"; break;
+        case STR: typeName = "string"; break;
+        case DEC: typeName = "int"; break;
+        case ANY: dim = -1; typeName = "null"; break;
+      }
     }
     else if(!node.list.isEmpty()) {
-      dim = node.list.get(0).dimension + 1;
+      for(var v : node.list) {
+        v.accept(this);
+      }
+      int tmpMin = ((TypeInfo) node.list.get(0).info).dimension;
+      int tmpMax = tmpMin;
+      String tmpType = "null";
+      for(var v : node.list) {
+        tmpMax = max(tmpMax, ((TypeInfo) v.info).dimension);
+        tmpMin = min(tmpMin, ((TypeInfo) v.info).dimension);
+        if(!v.info.name.equals("null")) tmpType = v.info.name;
+      }
+      if(tmpMax < 0) {
+        dim = tmpMin - 1;
+        typeName = "null";
+      }
+      else {
+        if(tmpMin < 0 && -tmpMin > tmpMax) throw new DimensionOutOfBound("LiteralML blank dimension mismatch", node.pos);
+        for(var v : node.list) {
+          if(((TypeInfo) v.info).dimension > 0 && ((TypeInfo) v.info).dimension != tmpMax) {
+            throw new DimensionOutOfBound("LiteralML dimension mismatch", node.pos);
+          }
+          if(!v.info.name.equals(tmpType) && !v.info.name.equals("null"))
+            throw new TypeMismatch("LiteralML type mismatch", node.pos);
+        }
+        typeName = tmpType;
+        dim = tmpMax + 1;
+      }
+    }
+    else {
+      throw new InternalError("LiteralMultiList empty unexpected", node.pos);
     }
     node.info = new TypeInfo(typeName, dim);
     node.isLValue = false;

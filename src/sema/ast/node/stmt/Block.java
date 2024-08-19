@@ -1,8 +1,8 @@
-package ast.node.stmt;
+package sema.ast.node.stmt;
 
-import ast.AstVisitor;
-import util.error.MyError;
-import util.scope.BaseScope;
+import sema.ast.AstVisitor;
+import sema.util.error.MyError;
+import sema.util.scope.BaseScope;
 
 import java.util.ArrayList;
 

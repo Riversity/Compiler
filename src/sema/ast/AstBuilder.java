@@ -1,24 +1,27 @@
-package ast;
+package sema.ast;
 
 import org.antlr.v4.runtime.misc.Pair;
 
-import ast.node.*;
-import ast.node.def.*;
-import ast.node.expr.*;
-import ast.node.stmt.*;
 import parser.MxBaseVisitor;
 import parser.MxParser;
-import util.Position;
-import util.error.SyntaxError;
-import util.error.TypeMismatch;
-import util.info.ClassInfo;
-import util.info.FuncInfo;
-import util.info.TypeInfo;
-import util.info.VarInfo;
+import sema.ast.node.BaseNode;
+import sema.ast.node.Program;
+import sema.ast.node.TypeNode;
+import sema.ast.node.def.ClassDef;
+import sema.ast.node.def.Def;
+import sema.ast.node.def.FuncDef;
+import sema.ast.node.def.VarDef;
+import sema.ast.node.expr.*;
+import sema.ast.node.stmt.*;
+import sema.util.Position;
+import sema.util.error.SyntaxError;
+import sema.util.error.TypeMismatch;
+import sema.util.info.ClassInfo;
+import sema.util.info.FuncInfo;
+import sema.util.info.TypeInfo;
+import sema.util.info.VarInfo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
 
 public class AstBuilder extends MxBaseVisitor<BaseNode> {
   @Override

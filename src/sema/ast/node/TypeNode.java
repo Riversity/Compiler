@@ -1,9 +1,9 @@
-package ast.node;
+package sema.ast.node;
 
-import ast.AstVisitor;
-import ast.node.expr.Expr;
-import util.error.MyError;
-import util.info.TypeInfo;
+import sema.ast.AstVisitor;
+import sema.ast.node.expr.Expr;
+import sema.util.error.MyError;
+import sema.util.info.TypeInfo;
 
 import java.util.ArrayList;
 

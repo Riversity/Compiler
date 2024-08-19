@@ -1,6 +1,6 @@
-package util.error;
+package sema.util.error;
 
-import util.Position;
+import sema.util.Position;
 
 public class InternalError extends MyError {
   public InternalError(String msg, Position pos) {

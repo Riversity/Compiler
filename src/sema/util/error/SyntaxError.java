@@ -1,6 +1,6 @@
-package util.error;
+package sema.util.error;
 
-import util.Position;
+import sema.util.Position;
 
 public class SyntaxError extends MyError {
   public SyntaxError(String msg, Position pos) {

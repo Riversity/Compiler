@@ -1,10 +1,8 @@
-package ast.node.def;
+package sema.ast.node.def;
 
-import ast.node.BaseNode;
-import ast.*;
-import ast.node.TypeNode;
-import util.error.MyError;
-import util.info.BaseInfo;
+import sema.ast.node.BaseNode;
+import sema.ast.AstVisitor;
+import sema.util.error.MyError;
 
 public class Def extends BaseNode {
   @Override

@@ -1,25 +1,27 @@
 package sema;
 
-import ast.AstVisitor;
-import ast.node.BaseNode;
-import ast.node.Program;
-import ast.node.def.ClassDef;
-import ast.node.def.FuncDef;
-import ast.node.def.VarDef;
-import ast.node.expr.*;
-import ast.node.stmt.*;
-import util.Position;
-import util.error.*;
-import util.error.InternalError;
-import util.info.TypeInfo;
-import util.info.VarInfo;
-import util.scope.BaseScope;
-import util.scope.ClassScope;
-import util.scope.GlobalScope;
+import sema.ast.AstVisitor;
+import sema.ast.node.BaseNode;
+import sema.ast.node.Program;
+import sema.ast.node.def.ClassDef;
+import sema.ast.node.def.FuncDef;
+import sema.ast.node.def.VarDef;
+import sema.ast.node.expr.*;
+import sema.ast.node.stmt.*;
+import sema.util.Position;
+import sema.util.error.MyError;
+import sema.util.error.SyntaxError;
+import sema.util.error.UndefinedIdentifier;
+import sema.util.error.InternalError;
+import sema.util.info.TypeInfo;
+import sema.util.info.VarInfo;
+import sema.util.scope.BaseScope;
+import sema.util.scope.ClassScope;
+import sema.util.scope.GlobalScope;
 
 import java.util.Objects;
 
-import static util.Native.intType;
+import static sema.util.Native.intType;
 
 public class SymbolCollector implements AstVisitor<String> {
   private GlobalScope globalScope;

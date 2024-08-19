@@ -1,8 +1,8 @@
-package ast.node.stmt;
+package sema.ast.node.stmt;
 
-import ast.AstVisitor;
-import ast.node.BaseNode;
-import util.error.MyError;
+import sema.ast.AstVisitor;
+import sema.ast.node.BaseNode;
+import sema.util.error.MyError;
 
 public class Stmt extends BaseNode {
   @Override

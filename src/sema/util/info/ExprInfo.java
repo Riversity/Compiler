@@ -1,4 +1,4 @@
-package util.info;
+package sema.util.info;
 
 public final class ExprInfo extends BaseInfo {
   private TypeInfo type;

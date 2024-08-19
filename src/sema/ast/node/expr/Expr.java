@@ -1,9 +1,9 @@
-package ast.node.expr;
+package sema.ast.node.expr;
 
-import ast.AstVisitor;
-import ast.node.BaseNode;
-import util.error.MyError;
-import util.info.*;
+import sema.ast.AstVisitor;
+import sema.ast.node.BaseNode;
+import sema.util.error.MyError;
+import sema.util.info.BaseInfo;
 
 public class Expr extends BaseNode {
   public BaseInfo info;

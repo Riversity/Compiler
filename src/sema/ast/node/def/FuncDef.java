@@ -1,13 +1,12 @@
-package ast.node.def;
+package sema.ast.node.def;
 
-import ast.AstVisitor;
-import ast.node.TypeNode;
-import ast.node.stmt.Block;
+import sema.ast.AstVisitor;
+import sema.ast.node.TypeNode;
+import sema.ast.node.stmt.Block;
 import org.antlr.v4.runtime.misc.Pair;
-import util.error.MyError;
-import util.info.FuncInfo;
-import util.info.TypeInfo;
-import util.scope.BaseScope;
+import sema.util.error.MyError;
+import sema.util.info.FuncInfo;
+import sema.util.scope.BaseScope;
 
 import java.util.ArrayList;
 

@@ -1,8 +1,7 @@
-package util.info;
+package sema.util.info;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public final class FuncInfo extends BaseInfo {
   public TypeInfo type;

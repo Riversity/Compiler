@@ -1,9 +1,12 @@
-package util.scope;
+package sema.util.scope;
 
-import util.Position;
-import util.error.InternalError;
-import util.error.MultipleDefinitions;
-import util.info.*;
+import sema.util.info.BaseInfo;
+import sema.util.Position;
+import sema.util.error.InternalError;
+import sema.util.error.MultipleDefinitions;
+import sema.util.info.ClassInfo;
+import sema.util.info.FuncInfo;
+import sema.util.info.VarInfo;
 
 import java.util.HashMap;
 

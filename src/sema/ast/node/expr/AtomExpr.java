@@ -1,8 +1,7 @@
-package ast.node.expr;
+package sema.ast.node.expr;
 
-import ast.AstVisitor;
-import ast.node.BaseNode;
-import util.error.*;
+import sema.ast.AstVisitor;
+import sema.util.error.MyError;
 
 public final class AtomExpr extends Expr {
   public static enum Type {

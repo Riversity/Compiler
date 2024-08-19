@@ -1,8 +1,8 @@
-package ast.node;
+package sema.ast.node;
 
-import util.Position;
-import ast.AstVisitor;
-import util.error.MyError;
+import sema.util.Position;
+import sema.ast.AstVisitor;
+import sema.util.error.MyError;
 
 public abstract class BaseNode {
   public Position pos;

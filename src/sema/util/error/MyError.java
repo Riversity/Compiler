@@ -1,6 +1,6 @@
-package util.error;
+package sema.util.error;
 
-import util.Position;
+import sema.util.Position;
 
 abstract public class MyError extends RuntimeException {
   public abstract String printError();

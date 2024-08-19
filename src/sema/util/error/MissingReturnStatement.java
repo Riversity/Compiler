@@ -1,6 +1,6 @@
-package util.error;
+package sema.util.error;
 
-import util.Position;
+import sema.util.Position;
 
 public class MissingReturnStatement extends MyError {
   public MissingReturnStatement(String msg, Position pos) {
