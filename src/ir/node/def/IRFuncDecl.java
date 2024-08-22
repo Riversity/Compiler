@@ -12,11 +12,11 @@ public class IRFuncDecl extends IRNode {
   public IRType returnType;
   public ArrayList<IRType> params;
 
-  /*public IRFuncDecl(String name, IRType returnType, ArrayList<IRType> params) {
+  public IRFuncDecl(String name, IRType returnType, ArrayList<IRType> params) {
     this.name = name;
     this.returnType = returnType;
     this.params = params;
-  }*/
+  }
 
   @Override
   public <T> T accept(IRVisitor<T> visitor) throws MyError {

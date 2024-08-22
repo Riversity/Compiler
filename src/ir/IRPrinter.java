@@ -2,6 +2,7 @@ package ir;
 
 import ir.node.*;
 import ir.node.def.IRFuncDef;
+import ir.node.def.IRGlobDef;
 import sema.util.error.*;
 import sema.util.error.InternalError;
 
@@ -28,5 +29,10 @@ public class IRPrinter implements IRVisitor<String> {
     }
     str.append("\n}");
     return str.toString();
+  }
+
+  @Override
+  public String visit(IRGlobDef node) throws MyError {
+    String ret = node.info.val + " = global ";
   }
 }
