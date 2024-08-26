@@ -12,22 +12,21 @@ public interface IRVisitor<T> {
 
   public T visit(IRFuncDef node) throws MyError;
   public T visit(IRFuncDecl node) throws MyError;
-  public T visit(IRClassDef node) throws MyError;
   public T visit(IRGlobDef node) throws MyError;
   public T visit(IRStrDef node) throws MyError;
 
-  public T visit(IRAllocaNode node) throws MyError;
-  public T visit(IRArithNode node) throws MyError;
-  public T visit(IRBranchNode node) throws MyError;
-  public T visit(IRCallNode node) throws MyError;
-  public T visit(IRGetElementPtrNode node) throws MyError;
-  public T visit(IRJumpNode node) throws MyError;
-  public T visit(IRLoadNode node) throws MyError;
-  public T visit(IRPhiNode node) throws MyError;
-  public T visit(IRReturnNode node) throws MyError;
-  public T visit(IRStoreNode node) throws MyError;
-  public T visit(IRCustomNode node) throws MyError;
-  public T visit(IRLabelNode node) throws MyError;
+  public T visit(IRAlloca node) throws MyError;
+  public T visit(IRArith node) throws MyError;
+  public T visit(IRBranch node) throws MyError;
+  public T visit(IRCall node) throws MyError;
+  public T visit(IRGetElementPtr node) throws MyError;
+  public T visit(IRJump node) throws MyError;
+  public T visit(IRLoad node) throws MyError;
+  // public T visit(IRPhi node) throws MyError;
+  public T visit(IRReturn node) throws MyError;
+  public T visit(IRStore node) throws MyError;
+
+  // public T visit(IRCustom node) throws MyError;
 
   public T visit(IRBlock node) throws MyError;
 }

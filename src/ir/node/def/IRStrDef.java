@@ -7,7 +7,7 @@ import sema.util.error.MyError;
 
 public class IRStrDef extends IRNode {
   public IRVarInfo info;
-  public String value;
+  public String str;
   public int length;
 
   @Override

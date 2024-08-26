@@ -6,7 +6,7 @@ import ir.node.ins.*;
 
 import java.util.ArrayList;
 
-public class IRStmt extends IRNode {
+public abstract class IRStmt extends IRNode {
   public IRBaseInfo dest;
   public ArrayList<IRBaseInst> insts;
   // addr of dest?

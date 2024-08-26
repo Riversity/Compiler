@@ -6,12 +6,12 @@ public class IRFuncInfo extends IRBaseInfo {
   public IRType returnType;
 
   public IRFuncInfo(String value, IRType returnType) {
-    super(new IRType("function"), value);
+    super(new IRType("__function"), value);
     this.returnType = returnType;
   }
 
   @Override
   public String toString() {
-    return "@" + val;
+    return "@" + name;
   }
 }

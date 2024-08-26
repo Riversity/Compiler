@@ -4,12 +4,20 @@ import ir.node.IRType;
 
 public abstract class IRBaseInfo {
   public IRType type;
-  public String val;
+  public String name;
 
-  public IRBaseInfo(IRType type, String value) {
+  public IRBaseInfo(IRType type, String name) {
     this.type = type;
-    this.val = value;
+    this.name = name;
   }
 
   public abstract String toString();
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof IRBaseInfo) {
+      return type.equals(((IRBaseInfo) obj).type) && name.equals(((IRBaseInfo) obj).name);
+    }
+    return false;
+  }
 }

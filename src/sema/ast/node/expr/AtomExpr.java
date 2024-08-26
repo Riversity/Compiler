@@ -14,14 +14,14 @@ public final class AtomExpr extends Expr {
   @Override
   public String toString() {
     if (atom_type == Type.STR) {
-      return "\"" + val
+      return "\"" + name
               .replace("\\", "\\\\")
               .replace("\n", "\\n")
               .replace("\t", "\\t")
               .replace("\"", "\\\"")
               + "\"";
     }
-    return val;
+    return name;
   }
   */
   @Override

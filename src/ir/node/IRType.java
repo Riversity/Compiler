@@ -12,6 +12,7 @@ public class IRType {
   }
 
   public IRType(TypeInfo type) {
+    // different while allocating
     if (type.equals(intType)) {
       this.typeName = "i32";
     } else if (type.equals(boolType)) {
@@ -26,5 +27,13 @@ public class IRType {
   @Override
   public String toString() {
     return typeName;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(obj instanceof IRType) {
+      return typeName.equals(((IRType)obj).typeName);
+    }
+    return false;
   }
 }
