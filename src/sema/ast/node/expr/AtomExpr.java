@@ -2,6 +2,7 @@ package sema.ast.node.expr;
 
 import sema.ast.AstVisitor;
 import sema.util.error.MyError;
+import sema.util.scope.BaseScope;
 
 public final class AtomExpr extends Expr {
   public static enum Type {
@@ -9,6 +10,8 @@ public final class AtomExpr extends Expr {
   }
   public Type atomType;
   public String val;
+
+  public BaseScope whereToFind;
 
   /*
   @Override

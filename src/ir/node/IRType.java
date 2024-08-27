@@ -13,9 +13,9 @@ public class IRType {
 
   public IRType(TypeInfo type) {
     // different while allocating
-    if (type.equals(intType)) {
+    if (type.equals(intType) && type.dimension == 0) {
       this.typeName = "i32";
-    } else if (type.equals(boolType)) {
+    } else if (type.equals(boolType) && type.dimension == 0) {
       this.typeName = "i1";
     } else if (type.equals(voidType)) {
       this.typeName = "void";

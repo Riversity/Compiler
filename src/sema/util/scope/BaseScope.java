@@ -35,4 +35,10 @@ public class BaseScope {
     if(parentScope != null) return parentScope.findRecur(name);
     return null;
   }
+
+  public BaseScope findRecurScope(String name) {
+    if(vars.containsKey(name)) return this;
+    if(parentScope != null) return parentScope.findRecurScope(name);
+    return null;
+  }
 }

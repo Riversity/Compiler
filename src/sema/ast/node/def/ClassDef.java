@@ -7,6 +7,7 @@ import sema.util.info.ClassInfo;
 import sema.util.scope.ClassScope;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ClassDef extends Def {
   public ClassScope scope;
@@ -16,6 +17,8 @@ public class ClassDef extends Def {
   public Block constructor;
   public ArrayList<VarDef> vars;
   public ArrayList<FuncDef> funcs;
+
+  public HashMap<String, Integer> offset;
 
   @Override
   public <T> T accept(AstVisitor<T> visitor) throws MyError {

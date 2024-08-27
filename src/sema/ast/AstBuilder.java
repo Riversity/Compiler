@@ -22,6 +22,7 @@ import sema.util.info.TypeInfo;
 import sema.util.info.VarInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AstBuilder extends MxBaseVisitor<BaseNode> {
   @Override
@@ -218,6 +219,7 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
     var classDef = new ClassDef();
     classDef.pos = new Position(ctx.start);
     classDef.name = ctx.Identifier().getText();
+    classDef.offset = new HashMap<>();
     /*
     var con = new FuncDef();
     con.retType = new TypeNode();
@@ -254,6 +256,7 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
     classDef.vars = new ArrayList<>();
     classDef.funcs = new ArrayList<>();
     classDef.info = new ClassInfo(classDef.name);
+    Integer i = 0;
     for(var v : ctx.varDef()) {
       var varDef = (VarDef) visit(v);
       classDef.vars.add(varDef);
@@ -261,6 +264,8 @@ public class AstBuilder extends MxBaseVisitor<BaseNode> {
       for(var p : varDef.list) {
         var varInfo = new VarInfo(p.a, tmpInfo);
         classDef.info.vars.put(p.a, varInfo);
+        classDef.offset.put(p.a, i);
+        ++i;
       }
     }
     for(var v : ctx.funcDef()) {

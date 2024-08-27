@@ -107,7 +107,7 @@ public class IRPrinter implements IRVisitor<String> {
 
   @Override
   public String visit(IRLoad node) throws MyError {
-    return node.dest.name + " = load " + node.dest.type + ", " + node.src;
+    return node.dest.name + " = load " + node.dest.type + ", ptr " + node.src.name;
   }
 
   @Override
@@ -117,7 +117,7 @@ public class IRPrinter implements IRVisitor<String> {
 
   @Override
   public String visit(IRStore node) throws MyError {
-    return "store " + node.src + ", " + node.dest;
+    return "store " + node.src + ", ptr " + node.dest.name;
   }
 
   @Override

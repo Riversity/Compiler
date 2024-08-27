@@ -119,6 +119,7 @@ public class SemanticChecker implements AstVisitor<String> {
     }
     else if(node.atomType == AtomExpr.Type.ID) {
       BaseInfo info = curScope.findRecur(node.val);
+      node.whereToFind = curScope.findRecurScope(node.val);
       if(info instanceof FuncInfo) {
         node.info = info;
       }

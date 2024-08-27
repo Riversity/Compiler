@@ -16,7 +16,7 @@ public class IRUtil {
       str = Integer.toHexString(curScope.hashCode()) + "." + str;
       curScope = curScope.parentScope;
     }
-    return "%Var." + str;
+    return "%" + name + "." + str;
   }
 
   public static String stringConstConvert(String str) {
@@ -25,11 +25,12 @@ public class IRUtil {
   }
 
   public static <T> String arrayToString(ArrayList<T> list, String sep) {
-    String str = "";
+    if(list == null || list.isEmpty()) return "";
+    StringBuilder str = new StringBuilder();
     for(int i = 0; i < list.size() - 1; i++) {
-      str += list.get(i).toString() + sep;
+      str.append(list.get(i).toString()).append(sep);
     }
-    str += list.get(list.size() - 1).toString();
-    return str;
+    str.append(list.get(list.size() - 1).toString());
+    return str.toString();
   }
 }
