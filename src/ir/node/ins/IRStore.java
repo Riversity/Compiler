@@ -9,6 +9,7 @@ public class IRStore extends IRBaseInst {
   public IRBaseInfo src;
   public IRVarInfo dest;
 
+  @Override
   public <T> T accept(IRVisitor<T> visitor) throws MyError {
     return visitor.visit(this);
   }

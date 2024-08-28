@@ -1,5 +1,6 @@
 package ir.util;
 
+import ir.node.stmt.IRBlock;
 import sema.util.scope.BaseScope;
 import sema.util.scope.GlobalScope;
 
@@ -7,6 +8,20 @@ import java.util.ArrayList;
 
 public class IRUtil {
   public static int tmpCnt = 0;
+  public static int strCnt = 0;
+  public static int blockCnt = 0;
+
+  public static String getTmpVar() {
+    return "%." + (tmpCnt++);
+  }
+
+  public static String getStrVar() {
+    return "%.string." + (strCnt++);
+  }
+
+  public static String getBlockVar() {
+    return "block" + (blockCnt++);
+  }
 
   public static String rename(String name, BaseScope scope) {
     if(scope instanceof GlobalScope) return "@" + name;

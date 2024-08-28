@@ -1,3 +1,7 @@
+import ir.IRBuilder;
+import ir.IRPrinter;
+import ir.node.IRNode;
+import ir.node.IRRoot;
 import org.antlr.v4.runtime.*;
 import parser.*;
 import sema.ast.AstBuilder;
@@ -33,6 +37,10 @@ public class Compiler {
       collector.visit((Program) program);
       SemanticChecker checker = new SemanticChecker();
       checker.visit((Program) program);
+      IRBuilder irBuilder = new IRBuilder();
+      IRNode rootNode = irBuilder.visit((Program) program);
+      IRPrinter printer = new IRPrinter();
+      System.out.println(printer.visit((IRRoot) rootNode));
     } catch (Exception e) {
       System.err.println(e.toString());
       if(e instanceof MyError) {
