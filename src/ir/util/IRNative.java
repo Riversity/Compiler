@@ -22,19 +22,19 @@ public interface IRNative {
   IRFuncDecl irGetIntFunc = new IRFuncDecl("getInt", irIntType, new ArrayList<>());
   IRFuncDecl irToStringFunc = new IRFuncDecl("toString", irPtrType, new ArrayList<>(List.of(irIntType)));
   IRFuncDecl irMallocFunc = new IRFuncDecl("malloc", irPtrType, new ArrayList<>(List.of(irIntType)));
-  IRFuncDecl irArraySizeFunc = new IRFuncDecl("__array_size", irIntType, new ArrayList<>(List.of(irPtrType)));
-  IRFuncDecl irStringLengthFunc = new IRFuncDecl("__string_length", irIntType, new ArrayList<>(List.of(irPtrType)));
-  IRFuncDecl irStringSubstringFunc = new IRFuncDecl("__string_substring", irPtrType,
+  IRFuncDecl irArraySizeFunc = new IRFuncDecl("__array.size", irIntType, new ArrayList<>(List.of(irPtrType)));
+  IRFuncDecl irStringLengthFunc = new IRFuncDecl("__string.length", irIntType, new ArrayList<>(List.of(irPtrType)));
+  IRFuncDecl irStringSubstringFunc = new IRFuncDecl("__string.substring", irPtrType,
           new ArrayList<>(List.of(irPtrType, irIntType, irIntType)));
-  IRFuncDecl irStringParseIntFunc = new IRFuncDecl("__string_parseInt", irIntType,
+  IRFuncDecl irStringParseIntFunc = new IRFuncDecl("__string.parseInt", irIntType,
           new ArrayList<>(List.of(irPtrType)));
-  IRFuncDecl irStringOrdFunc = new IRFuncDecl("__string_ord", irIntType,
+  IRFuncDecl irStringOrdFunc = new IRFuncDecl("__string.ord", irIntType,
           new ArrayList<>(List.of(irPtrType, irIntType)));
-  IRFuncDecl irStringCompareFunc = new IRFuncDecl("__string_compare", irIntType,
+  IRFuncDecl irStringCompareFunc = new IRFuncDecl("__string.compare", irIntType,
           new ArrayList<>(List.of(irPtrType, irPtrType)));
-  IRFuncDecl irStringConcatFunc = new IRFuncDecl("__string_concat", irPtrType,
+  IRFuncDecl irStringConcatFunc = new IRFuncDecl("__string.concat", irPtrType,
           new ArrayList<>(List.of(irPtrType, irPtrType)));
-  IRFuncDecl irStringCopyFunc = new IRFuncDecl("__string_copy", irVoidType,
+  IRFuncDecl irStringCopyFunc = new IRFuncDecl("__string.copy", irVoidType,
           new ArrayList<>(List.of(irPtrType, irPtrType)));
   IRFuncDecl[] irBuiltInFuncs = { irPrintFunc, irPrintlnFunc, irPrintIntFunc, irPrintlnIntFunc,
           irGetStringFunc, irGetIntFunc, irToStringFunc, irMallocFunc, irArraySizeFunc, irStringLengthFunc,

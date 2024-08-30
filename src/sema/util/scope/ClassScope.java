@@ -47,4 +47,12 @@ public class ClassScope extends BaseScope {
     if(parentScope != null) return parentScope.findRecur(name);
     return null;
   }
+
+  @Override
+  public BaseScope findRecurScope(String name) {
+    if(vars.containsKey(name)) return this;
+    if(funcs.containsKey(name)) return this;
+    if(parentScope != null) return parentScope.findRecurScope(name);
+    return null;
+  }
 }

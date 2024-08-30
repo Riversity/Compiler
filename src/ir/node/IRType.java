@@ -32,7 +32,7 @@ public class IRType {
   @Override
   public boolean equals(Object obj) {
     if(obj instanceof IRType) {
-      return typeName.equals(((IRType)obj).typeName);
+      return typeName.equals(((IRType) obj).typeName);
     }
     return false;
   }

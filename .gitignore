@@ -7,3 +7,7 @@ testcases
 ravel
 test.py
 builtin.ll
+output.ll
+*.mx
+test.in
+test

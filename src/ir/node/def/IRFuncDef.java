@@ -19,7 +19,7 @@ public class IRFuncDef extends IRNode {
   public <T> T accept(IRVisitor<T> visitor) throws MyError {
     return visitor.visit(this);
   }
-
+  /*
   public void addInst(IRBaseInst ins) {
     if(blocks == null) {
       blocks = new ArrayList<>();
@@ -34,4 +34,5 @@ public class IRFuncDef extends IRNode {
     }
     blocks.get(blocks.size() - 1).addInst(ins);
   }
+  */
 }

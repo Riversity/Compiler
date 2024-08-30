@@ -100,6 +100,7 @@ public class SemanticChecker implements AstVisitor<String> {
       }
       curScope.insert(new VarInfo(p.a, node.type.info), node.pos);
     }
+    node.scope = curScope;
     return "";
   }
 

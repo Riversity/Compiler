@@ -40,7 +40,7 @@ public class IRPrinter implements IRVisitor<String> {
     str.append(arrayToString(node.params, ", "));
     str.append(") {\n");
     for(var v : node.blocks) {
-      str.append(v.accept(this)).append("\n");
+      str.append(v.accept(this));
     }
     str.append("}");
     return str.toString();
@@ -127,6 +127,7 @@ public class IRPrinter implements IRVisitor<String> {
     for(var i : node.insts) {
       str.append("  ").append(i.accept(this)).append("\n");
     }
+    str.append("  ").append(node.exit.accept(this)).append("\n");
     return str.toString();
   }
 }

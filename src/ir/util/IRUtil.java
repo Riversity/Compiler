@@ -1,10 +1,16 @@
 package ir.util;
 
+import ir.info.IRConstInfo;
+import ir.node.IRType;
 import ir.node.stmt.IRBlock;
+import sema.util.error.InternalError;
 import sema.util.scope.BaseScope;
 import sema.util.scope.GlobalScope;
 
 import java.util.ArrayList;
+
+import static ir.util.IRNative.*;
+import static sema.util.Position.blankPos;
 
 public class IRUtil {
   public static int tmpCnt = 0;
@@ -20,10 +26,11 @@ public class IRUtil {
   }
 
   public static String getBlockVar() {
-    return "block" + (blockCnt++);
+    return "label." + (blockCnt++);
   }
 
   public static String rename(String name, BaseScope scope) {
+    if(scope == null) throw new InternalError("Null scope!", blankPos);
     if(scope instanceof GlobalScope) return "@" + name;
     String str = "";
     BaseScope curScope = scope;
