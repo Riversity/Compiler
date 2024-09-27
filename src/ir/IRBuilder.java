@@ -24,6 +24,7 @@ import java.util.Stack;
 
 import static ir.util.IRNative.*;
 import static ir.util.IRUtil.*;
+import static sema.util.Native.*;
 
 public class IRBuilder implements AstVisitor<IRNode> {
   ArrayList<IRGlobDef> strDefs = new ArrayList<>();
@@ -322,7 +323,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
     else if(node.op.equals("-")) {
       var arith = new IRArith();
       arith.dest = new IRVarInfo(irIntType, getTmpVar());
-      arith.lhs = new IRConstInfo(irIntType, "0");
+      arith.lhs = irZero;
       arith.rhs = obj.dest;
       arith.op = "sub";
       cur.addInst(arith);
@@ -357,8 +358,109 @@ public class IRBuilder implements AstVisitor<IRNode> {
     return null;
   }
   public IRNode visit(BinaryExpr node) throws MyError {
-    // TODO
-    return null;
+    IRExpr ret = new IRExpr();
+    if(node.op.equals("&&")) {
+      // short circuit
+      IRExpr lhs = (IRExpr) node.lhs.accept(this);
+      String tmp = getIfNumber();
+
+      var dest = new IRVarInfo(irBoolType, getTmpVar());
+      // may be omitted?
+      var result = new IRArith();
+      result.dest = dest;
+      result.lhs = result.rhs = irFalse;
+      result.op = "and";
+      cur.addInst(result);
+
+      var trueBr = new IRBlock(tmp + ".true." + getBlockLabel());
+      curFunc.blocks.add(trueBr);
+      var end = new IRBlock(tmp + ".end." + getBlockLabel(), cur.exit);
+      curFunc.blocks.add(end);
+      cur.exit = new IRBranch(trueBr, end, lhs.dest);
+      trueBr.exit = new IRJump(end);
+
+      cur = trueBr;
+      IRExpr rhs = (IRExpr) node.lhs.accept(this);
+      var tf = new IRArith();
+      tf.dest = dest;
+      tf.lhs = rhs.dest;
+      tf.rhs = irFalse;
+      tf.op = "or";
+      cur.addInst(tf);
+
+      cur = end;
+
+      ret.dest = dest;
+      return ret;
+    }
+    else if(node.op.equals("||")) {
+      // TODO
+    }
+    IRExpr lhs = (IRExpr) node.lhs.accept(this);
+    IRExpr rhs = (IRExpr) node.rhs.accept(this);
+
+    if(node.lhs.info.equals(stringType)) {
+      var call = new IRCall(); // dest, type, funcName
+      call.args = new ArrayList<>();
+      call.args.add(lhs.dest);
+      call.args.add(rhs.dest);
+      if(node.op.equals("+")) {
+        call.funcName = "__string.concat";
+        call.type = irPtrType;
+        ret.dest = call.dest = new IRVarInfo(irPtrType, getTmpVar());
+        cur.addInst(call);
+        return ret;
+      }
+      call.funcName = "__string.compare";
+      call.type = irIntType;
+      call.dest = new IRVarInfo(irIntType, getTmpVar());
+      cur.addInst(call);
+      var cmp = new IRArith();
+      cmp.lhs = call.dest;
+      cmp.rhs = irZero;
+      ret.dest = cmp.dest = new IRVarInfo(irBoolType, getTmpVar());
+      cmp.op = switch(node.op) {
+        case "==" -> "eq";
+        case "!=" -> "ne";
+        case ">" -> "sgt";
+        case ">=" -> "sge";
+        case "<" -> "slt";
+        case "<=" -> "sle";
+
+        default -> throw new InternalError("Binary of string op type unexpected", node.pos);
+      };
+      cur.addInst(call);
+      cur.addInst(cmp);
+    }
+    else {
+      var arith = new IRArith();
+      ret.dest = arith.dest = new IRVarInfo(irIntType, getTmpVar());
+      arith.lhs = lhs.dest;
+      arith.rhs = rhs.dest;
+
+      arith.op = switch(node.op) {
+        case "+" -> "add";
+        case "-" -> "sub";
+        case "*" -> "mul";
+        case "/" -> "sdiv";
+        case "%" -> "srem";
+        case "<<" -> "shl";
+        case ">>" -> "ashr";
+        case "&" -> "and";
+        case "|" -> "or";
+        case "^" -> "xor";
+        case "==" -> "eq";
+        case "!=" -> "ne";
+        case ">" -> "sgt";
+        case ">=" -> "sge";
+        case "<" -> "slt";
+        case "<=" -> "sle";
+
+        default -> throw new InternalError("Binary of int op type unexpected", node.pos);
+      };
+      cur.addInst(arith);
+    }
+    return ret;
   }
   public IRNode visit(LiteralML node) throws MyError {
     // TODO

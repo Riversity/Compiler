@@ -17,6 +17,12 @@ public class IRBranch extends IRBaseInst {
     this.falseEnd = falseEnd;
   }
 
+  public IRBranch(IRBlock trueEnd, IRBlock falseEnd, IRBaseInfo condition) {
+    this.trueEnd = trueEnd;
+    this.falseEnd = falseEnd;
+    this.condition = condition;
+  }
+
   public String trueLabel() {
     return trueEnd.label;
   }

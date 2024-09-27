@@ -1,5 +1,6 @@
 package ir.util;
 
+import ir.info.IRConstInfo;
 import ir.node.IRType;
 import ir.node.def.IRFuncDecl;
 
@@ -11,7 +12,9 @@ import static sema.util.Native.*;
 public interface IRNative {
   IRType irVoidType = new IRType(voidType);
   IRType irIntType = new IRType(intType);
+  IRConstInfo irZero = new IRConstInfo(irIntType, "0");
   IRType irBoolType = new IRType(boolType);
+  IRConstInfo irFalse = new IRConstInfo(irBoolType, "0");
   IRType irPtrType = new IRType("ptr");
 
   IRFuncDecl irPrintFunc = new IRFuncDecl("print", irVoidType, new ArrayList<>(List.of(irPtrType)));
