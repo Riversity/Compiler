@@ -9,6 +9,7 @@ import sema.util.error.InternalError;
 
 import static ir.util.IRNative.*;
 import static ir.util.IRUtil.arrayToString;
+import static ir.util.IRUtil.stringConstLen;
 import static sema.util.Position.blankPos;
 
 public class IRPrinter implements IRVisitor<String> {
@@ -58,14 +59,14 @@ public class IRPrinter implements IRVisitor<String> {
       return node.info.name + " = global " + node.info.type + " 0";
     }
     else if(node.info.type instanceof IRStructType) {
-      return node.info.name + " = global " + node.info.type.toString();
+      return node.info.name + " = type " + node.info.type.toString();
     }
     else return node.info.name + " = global ptr null";
   }
 
   @Override
   public String visit(IRStrDef node) throws MyError {
-    return node.info.name + " = constant [" + node.length + " x i8] c\"" + node.str + "\"";
+    return node.info.name + " = constant [" + stringConstLen(node.str) + " x i8] c\"" + node.str + "\"";
   }
 
 
@@ -84,7 +85,7 @@ public class IRPrinter implements IRVisitor<String> {
 
   @Override
   public String visit(IRBranch node) throws MyError {
-    return "br " + node.condition.toString() + ", label %" + node.trueLabel + ", label %" + node.falseLabel;
+    return "br " + node.condition.toString() + ", label %" + node.trueLabel() + ", label %" + node.falseLabel();
   }
 
   @Override
@@ -102,7 +103,7 @@ public class IRPrinter implements IRVisitor<String> {
 
   @Override
   public String visit(IRJump node) throws MyError {
-    return "br label %" + node.label;
+    return "br label %" + node.label();
   }
 
   @Override

@@ -5,17 +5,16 @@ import ir.node.stmt.IRBlock;
 import sema.util.error.MyError;
 
 public class IRJump extends IRBaseInst {
-  public String label;
-
-  public IRBlock start;
   public IRBlock end;
 
   public IRJump() {}
 
-  public IRJump(IRBlock start, IRBlock end) {
-    this.start = start;
+  public String label() {
+    return end.label;
+  }
+
+  public IRJump(IRBlock end) {
     this.end = end;
-    this.label = end.label;
   }
 
   @Override

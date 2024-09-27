@@ -7,10 +7,23 @@ import sema.util.error.MyError;
 
 public class IRBranch extends IRBaseInst {
   public IRBaseInfo condition;
-  public String trueLabel, falseLabel;
 
-  public IRBlock start;
   public IRBlock trueEnd, falseEnd;
+
+  public IRBranch() {}
+
+  public IRBranch(IRBlock trueEnd, IRBlock falseEnd) {
+    this.trueEnd = trueEnd;
+    this.falseEnd = falseEnd;
+  }
+
+  public String trueLabel() {
+    return trueEnd.label;
+  }
+
+  public String falseLabel() {
+    return falseEnd.label;
+  }
 
   @Override
   public <T> T accept(IRVisitor<T> visitor) throws MyError {

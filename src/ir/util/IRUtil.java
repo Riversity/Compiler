@@ -1,32 +1,33 @@
 package ir.util;
 
-import ir.info.IRConstInfo;
-import ir.node.IRType;
-import ir.node.stmt.IRBlock;
 import sema.util.error.InternalError;
 import sema.util.scope.BaseScope;
 import sema.util.scope.GlobalScope;
 
 import java.util.ArrayList;
 
-import static ir.util.IRNative.*;
 import static sema.util.Position.blankPos;
 
 public class IRUtil {
   public static int tmpCnt = 0;
   public static int strCnt = 0;
   public static int blockCnt = 0;
+  public static int ifCnt = 0;
 
   public static String getTmpVar() {
     return "%." + (tmpCnt++);
   }
 
   public static String getStrVar() {
-    return "%.string." + (strCnt++);
+    return "@string." + (strCnt++);
   }
 
-  public static String getBlockVar() {
+  public static String getBlockLabel() {
     return "label." + (blockCnt++);
+  }
+
+  public static String getIfNumber() {
+    return "if" + (ifCnt++);
   }
 
   public static String rename(String name, BaseScope scope) {
@@ -43,7 +44,12 @@ public class IRUtil {
 
   public static String stringConstConvert(String str) {
     return str.substring(1, str.length() - 1).replace("\\n", "\\0A")
-            .replace("\\\"", "\\22");
+            .replace("\\\"", "\\22").concat("\\00");
+  }
+
+  public static int stringConstLen(String str) {
+    return str.replace("\\0A", "$").replace("\\22", "$")
+            .replace("\\00", "$").replace("\\\\", "$").length();
   }
 
   public static <T> String arrayToString(ArrayList<T> list, String sep) {

@@ -6,6 +6,8 @@ public final class ClassInfo extends BaseInfo {
   public HashMap<String, VarInfo> vars;
   public HashMap<String, FuncInfo> funcs;
 
+  public HashMap<String, Integer> offset;
+
   public ClassInfo(String name, FuncInfo... funcs) {
     super(name);
     this.vars = new HashMap<String, VarInfo>();

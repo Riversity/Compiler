@@ -11,6 +11,7 @@ public class IRBlock extends IRExpr {
   public String label;
   public ArrayList<IRBaseInst> insts;
   public IRBaseInst exit;
+  public boolean unreachable = false;
 
   public IRBlock(String label) {
     insts = new ArrayList<>();

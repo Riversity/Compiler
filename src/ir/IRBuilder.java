@@ -29,9 +29,18 @@ public class IRBuilder implements AstVisitor<IRNode> {
   ArrayList<IRGlobDef> strDefs = new ArrayList<>();
   String curClassName = null;
   IRFuncDef curFunc;
-  Stack<IRBlock> curStack = new Stack<>();
+  IRBlock cur;
   Stack<IRBlock> breakDests = new Stack<>();
   Stack<IRBlock> continueDests = new Stack<>();
+
+  public IRBlock addBr(IRBaseInst br) {
+    IRBlock ret = new IRBlock(getBlockLabel(), cur.exit);
+    ret.unreachable = true;
+    curFunc.blocks.add(ret);
+    cur.exit = br;
+    cur = ret;
+    return ret;
+  }
 
   public IRNode visit(BaseNode node) throws MyError {
     throw new InternalError("IRBuilder ASTNode type invalid", node.pos);
@@ -62,7 +71,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
     }
 
     curFunc = init;
-    curStack.push(init.blocks.get(0));
+    cur = init.blocks.get(0);
     for(var def : node.defs) {
       if (def instanceof VarDef) {
         for (var d : ((VarDef) def).list) {
@@ -73,12 +82,12 @@ public class IRBuilder implements AstVisitor<IRNode> {
             inst.dest = new IRVarInfo(new IRType(((VarDef) def).type.info), rename(d.a, node.scope));
             var exprRes = (IRExpr) d.b.accept(this);
             inst.src = exprRes.dest;
-            curStack.peek().addInst(inst);
+            cur.addInst(inst);
           }
         }
       }
     }
-    curStack.pop();
+    cur = null;
     curFunc = null;
 
     for(var def : node.defs) {
@@ -131,20 +140,18 @@ public class IRBuilder implements AstVisitor<IRNode> {
     for(var p : node.params) {
       ret.params.add(new IRVarInfo(new IRType(p.a.info), rename(p.b, node.scope)));
     }
-    String name1 = getBlockVar();
-    String name2 = getBlockVar();
+    String name1 = getBlockLabel();
+    String name2 = getBlockLabel();
     IRBlock curBlock = new IRBlock(name1, new IRJump());
-    curStack.push(curBlock);
+    cur = curBlock;
     IRBlock nextBlock = new IRBlock(name2, new IRReturn(ret.returnType, new IRConstInfo(ret.returnType, "0")));
-    ((IRJump) curBlock.exit).start = curBlock;
     ((IRJump) curBlock.exit).end = nextBlock;
-    ((IRJump) curBlock.exit).label = name2;
     ret.blocks.add(curBlock);
     ret.blocks.add(nextBlock);
     for(var s : node.body.statements) {
       s.accept(this);
     }
-    curStack.pop();
+    cur = null;
     curFunc = null;
     return ret;
   }
@@ -156,14 +163,14 @@ public class IRBuilder implements AstVisitor<IRNode> {
       var alloc = new IRAlloca();
       alloc.type = new IRType(node.type.info);
       alloc.dest = new IRVarInfo(alloc.type, rename(d.a, node.scope));
-      curStack.peek().addInst(alloc);
+      cur.addInst(alloc);
 
       if(d.b != null) {
         var inst = new IRStore();
         inst.dest = alloc.dest;
         var exprRes = (IRExpr) d.b.accept(this);
         inst.src = exprRes.dest;
-        curStack.peek().addInst(inst);
+        cur.addInst(inst);
       }
     }
     return null;
@@ -192,17 +199,31 @@ public class IRBuilder implements AstVisitor<IRNode> {
         }
         else {
           String tmpName;
-          if(node.whereToFind instanceof ClassScope) {
-            // inside ClassDef
-            tmpName = "__" + curClassName + "." + node.val;
-          }
-          else tmpName = rename(node.val, node.whereToFind);
           var type = new IRType((TypeInfo) node.info);
           var dest = new IRVarInfo(type, getTmpVar());
-          var src = new IRVarInfo(irPtrType, tmpName);
-          curStack.peek().addInst(new IRLoad(dest, src));
-          ret.dest = dest;
-          ret.destAddr = src;
+          if(node.whereToFind instanceof ClassScope) {
+            // inside ClassDef
+            tmpName = "%__" + curClassName + "." + node.val;
+            var getele = new IRGetElementPtr();
+            int offset = ((ClassInfo) node.whereToFind.info).offset.get(node.val);
+            getele.isMember = true;
+            getele.index = new IRConstInfo(irIntType, Integer.toString(offset));
+            getele.type = new IRType("%class." + curClassName);
+            getele.src = new IRVarInfo(irPtrType, "%this");
+            var src = new IRVarInfo(irPtrType, tmpName);
+            getele.dest = src;
+            cur.addInst(getele);
+            cur.addInst(new IRLoad(dest, src));
+            ret.dest = dest;
+            ret.destAddr = src;
+          }
+          else {
+            tmpName = rename(node.val, node.whereToFind);
+            var src = new IRVarInfo(irPtrType, tmpName);
+            cur.addInst(new IRLoad(dest, src));
+            ret.dest = dest;
+            ret.destAddr = src;
+          }
         }
         break;
       case STR:
@@ -214,7 +235,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
       case THIS:
         var loadSrc = new IRVarInfo(irPtrType, "%this");
         var loadDest = new IRVarInfo(irPtrType, getTmpVar());
-        curStack.peek().addInst(new IRLoad(loadDest, loadSrc));
+        cur.addInst(new IRLoad(loadDest, loadSrc));
         ret.dest = loadDest;
         break;
       default:
@@ -252,7 +273,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
       IRExpr tmpRes = (IRExpr) a.accept(this);
       call.args.add(tmpRes.dest);
     }
-    curStack.peek().addInst(call);
+    cur.addInst(call);
     ret.dest = call.dest;
     return ret;
   }
@@ -270,8 +291,8 @@ public class IRBuilder implements AstVisitor<IRNode> {
     var store = new IRStore();
     store.src = add.dest;
     store.dest = (IRVarInfo) obj.destAddr;
-    curStack.peek().addInst(add);
-    curStack.peek().addInst(store);
+    cur.addInst(add);
+    cur.addInst(store);
 
     ret.dest = obj.dest;
     return ret;
@@ -289,8 +310,8 @@ public class IRBuilder implements AstVisitor<IRNode> {
       var store = new IRStore();
       store.src = arith.dest;
       store.dest = (IRVarInfo) obj.destAddr;
-      curStack.peek().addInst(arith);
-      curStack.peek().addInst(store);
+      cur.addInst(arith);
+      cur.addInst(store);
 
       ret.dest = arith.dest;
       ret.destAddr = obj.destAddr;
@@ -304,7 +325,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
       arith.lhs = new IRConstInfo(irIntType, "0");
       arith.rhs = obj.dest;
       arith.op = "sub";
-      curStack.peek().addInst(arith);
+      cur.addInst(arith);
 
       ret.dest = arith.dest;
     }
@@ -314,7 +335,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
       arith.lhs = obj.dest;
       arith.rhs = new IRConstInfo(irBoolType, "1");
       arith.op = "xor";
-      curStack.peek().addInst(arith);
+      cur.addInst(arith);
 
       ret.dest = arith.dest;
     }
@@ -324,7 +345,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
       arith.lhs = obj.dest;
       arith.rhs = new IRConstInfo(irIntType, "-1");
       arith.op = "xor";
-      curStack.peek().addInst(arith);
+      cur.addInst(arith);
 
       ret.dest = arith.dest;
     }
@@ -358,22 +379,61 @@ public class IRBuilder implements AstVisitor<IRNode> {
     }
     return null;
   }
+
   public IRNode visit(VarDefStmt node) throws MyError {
     node.def.accept(this);
     return null;
   }
+
   public IRNode visit(IfElseStmt node) throws MyError {
-    // TODO
+    String tmp = getIfNumber();
+    var cond = cur;
+    var trueBr = new IRBlock(tmp + ".true." + getBlockLabel());
+    curFunc.blocks.add(trueBr);
+    var end = new IRBlock(tmp + ".end." + getBlockLabel(), cur.exit);
+    curFunc.blocks.add(end);
+    if(node.falseBranch == null) {
+      var condJmp = new IRBranch(trueBr, end);
+      trueBr.exit = new IRJump(end);
+      cur = cond;
+      cond.exit = condJmp;
+      IRExpr condExpr = (IRExpr) node.condition.accept(this);
+      condJmp.condition = condExpr.dest;
+      cur = trueBr;
+      node.trueBranch.accept(this);
+      cur = end;
+    }
+    else {
+      var falseBr = new IRBlock(tmp + ".false." + getBlockLabel());
+      curFunc.blocks.add(falseBr);
+      var condJmp = new IRBranch(trueBr, falseBr);
+      trueBr.exit = new IRJump(end);
+      falseBr.exit = new IRJump(end);
+      cur = cond;
+      cond.exit = condJmp;
+      IRExpr condExpr = (IRExpr) node.condition.accept(this);
+      condJmp.condition = condExpr.dest;
+      cur = trueBr;
+      node.trueBranch.accept(this);
+      cur = falseBr;
+      node.falseBranch.accept(this);
+      cur = end;
+    }
     return null;
   }
+
   public IRNode visit(BreakStmt node) throws MyError {
-    // TODO
+    var jmp = new IRJump(breakDests.peek());
+    addBr(jmp);
     return null;
   }
+
   public IRNode visit(ContinueStmt node) throws MyError {
-    // TODO
+    var jmp = new IRJump(continueDests.peek());
+    addBr(jmp);
     return null;
   }
+
   public IRNode visit(RetStmt node) throws MyError {
     IRReturn ins;
     if(node.retVal == null) ins = new IRReturn(irVoidType, null);
@@ -381,21 +441,26 @@ public class IRBuilder implements AstVisitor<IRNode> {
       IRExpr val = (IRExpr) node.retVal.accept(this);
       ins = new IRReturn(val.dest.type, val.dest);
     }
-    curStack.peek().addInst(ins);
+    addBr(ins);
     return null;
   }
+
   public IRNode visit(WhileStmt node) throws MyError {
+    // Remember: dests update
     // TODO
     return null;
   }
+
   public IRNode visit(ForStmt node) throws MyError {
     // TODO
     return null;
   }
+
   public IRNode visit(PurExprStmt node) throws MyError {
     node.expr.accept(this);
     return null;
   }
+
   public IRNode visit(EmptyStmt node) throws MyError {
     return null;
   }
