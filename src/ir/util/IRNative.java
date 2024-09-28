@@ -15,6 +15,7 @@ public interface IRNative {
   IRConstInfo irZero = new IRConstInfo(irIntType, "0");
   IRType irBoolType = new IRType(boolType);
   IRConstInfo irFalse = new IRConstInfo(irBoolType, "0");
+  IRConstInfo irTrue = new IRConstInfo(irBoolType, "1");
   IRType irPtrType = new IRType("ptr");
 
   IRFuncDecl irPrintFunc = new IRFuncDecl("print", irVoidType, new ArrayList<>(List.of(irPtrType)));

@@ -380,7 +380,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
       trueBr.exit = new IRJump(end);
 
       cur = trueBr;
-      IRExpr rhs = (IRExpr) node.lhs.accept(this);
+      IRExpr rhs = (IRExpr) node.rhs.accept(this);
       var tf = new IRArith();
       tf.dest = dest;
       tf.lhs = rhs.dest;
@@ -394,7 +394,36 @@ public class IRBuilder implements AstVisitor<IRNode> {
       return ret;
     }
     else if(node.op.equals("||")) {
-      // TODO
+      IRExpr lhs = (IRExpr) node.lhs.accept(this);
+      String tmp = getIfNumber();
+
+      var dest = new IRVarInfo(irBoolType, getTmpVar());
+      var result = new IRArith();
+      result.dest = dest;
+      result.lhs = result.rhs = irTrue;
+      result.op = "and";
+      cur.addInst(result);
+
+      var falseBr = new IRBlock(tmp + ".false." + getBlockLabel());
+      curFunc.blocks.add(falseBr);
+      var end = new IRBlock(tmp + ".end." + getBlockLabel(), cur.exit);
+      curFunc.blocks.add(end);
+      cur.exit = new IRBranch(end, falseBr, lhs.dest);
+      falseBr.exit = new IRJump(end);
+
+      cur = falseBr;
+      IRExpr rhs = (IRExpr) node.rhs.accept(this);
+      var tf = new IRArith();
+      tf.dest = dest;
+      tf.lhs = rhs.dest;
+      tf.rhs = irFalse;
+      tf.op = "or";
+      cur.addInst(tf);
+
+      cur = end;
+
+      ret.dest = dest;
+      return ret;
     }
     IRExpr lhs = (IRExpr) node.lhs.accept(this);
     IRExpr rhs = (IRExpr) node.rhs.accept(this);
