@@ -68,6 +68,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
         }
         var struct = new IRStructType("%class." + ((ClassDef) def).name, structMember);
         ret.defs.add(new IRGlobDef(new IRVarInfo(struct, "%class." + ((ClassDef) def).name)));
+        calcSize(((ClassDef) def).name, structMember);
       }
     }
 
@@ -98,15 +99,16 @@ public class IRBuilder implements AstVisitor<IRNode> {
           ret.funcs.add((IRFuncDef) func.accept(this));
         }
 
-        var contNode = new FuncDef();
-        contNode.name = "__ctor";
-        contNode.params = new ArrayList<>();
-        contNode.body = ((ClassDef) def).constructor;
-        contNode.retType = new TypeNode();
-        contNode.retType.width = new ArrayList<>();
-        contNode.retType.info = new TypeInfo("void", 0);
-        IRFuncDef cont = (IRFuncDef) contNode.accept(this);
-        ret.funcs.add(cont);
+        var ctorNode = new FuncDef();
+        ctorNode.name = "__ctor";
+        // class name will be attached when accepting
+        ctorNode.params = new ArrayList<>();
+        ctorNode.body = ((ClassDef) def).constructor;
+        ctorNode.retType = new TypeNode();
+        ctorNode.retType.width = new ArrayList<>();
+        ctorNode.retType.info = new TypeInfo("void", 0);
+        IRFuncDef ctor = (IRFuncDef) ctorNode.accept(this);
+        ret.funcs.add(ctor);
         curClassName = null;
       }
     }
@@ -283,7 +285,6 @@ public class IRBuilder implements AstVisitor<IRNode> {
     var ret = new IRExpr();
     var obj = (IRExpr) node.object.accept(this);
     // RValue
-
     var add = new IRArith();
     add.dest = new IRVarInfo(irIntType, getTmpVar());
     add.lhs = obj.dest;
@@ -298,6 +299,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
     ret.dest = obj.dest;
     return ret;
   }
+
   public IRNode visit(UnaryExpr node) throws MyError {
     var ret = new IRExpr();
     var obj = (IRExpr) node.object.accept(this);
@@ -354,9 +356,59 @@ public class IRBuilder implements AstVisitor<IRNode> {
   }
 
   public IRNode visit(NewExpr node) throws MyError {
-    // TODO
-    return null;
+    var type = node.type;
+    var ret = new IRExpr();
+    if(type.width.isEmpty()) {
+      var allocPlace = new IRVarInfo(irPtrType, getTmpVar());
+      var call = new IRCall();
+      call.funcName = "malloc";
+      call.type = irPtrType;
+      call.dest = allocPlace;
+      call.args = new ArrayList<>();
+      call.args.add(new IRConstInfo(irIntType, sizeQuery.get(type.info.name).toString()));
+      cur.addInst(call);
+      if(!type.info.isNative) {
+        // class constructor
+        var ctor = new IRCall();
+        ctor.funcName = "__" + type.info.name + ".__ctor";
+        ctor.type = irVoidType;
+        ctor.args = new ArrayList<>();
+        ctor.args.add(allocPlace);
+        cur.addInst(ctor);
+      }
+      ret.dest = allocPlace;
+    }
+    else {
+      var allocPlace = new IRVarInfo(irPtrType, getTmpVar());
+      var call = new IRCall();
+      call.funcName = "__alloc";
+      call.type = irPtrType;
+      call.dest = allocPlace;
+      call.args = new ArrayList<>();
+      call.args.add(new IRConstInfo(irIntType, sizeQuery.get(type.info.name).toString()));
+      call.args.add(new IRConstInfo(irIntType, Integer.toString(type.info.dimension)));
+      call.args.add(new IRConstInfo(irIntType, Integer.toString(type.width.size()))); // == 0 how?
+      for(var e : type.width) {
+        call.args.add(new IRConstInfo(irIntType, ((AtomExpr) e).val)); // sus
+      }
+      cur.addInst(call);
+      ret.dest = allocPlace;
+    }
+    if(node.init != null) {
+      if(node.init.atomList == null || !node.init.type.equals(LiteralML.Type.DEC)) {
+        throw new InternalError("High dimension LiteralML not yet implemented", node.pos);
+      }
+      else {
+        for(var v : node.init.atomList) {
+          //var store = new IRStore();
+          //store.src = new
+          // TODO
+        }
+      }
+    }
+    return ret;
   }
+
   public IRNode visit(BinaryExpr node) throws MyError {
     IRExpr ret = new IRExpr();
     if(node.op.equals("&&")) {
@@ -492,13 +544,30 @@ public class IRBuilder implements AstVisitor<IRNode> {
     return ret;
   }
   public IRNode visit(LiteralML node) throws MyError {
-    // TODO
-    return null;
+    throw new InternalError("LiteralML should not appear out of new", node.pos);
   }
+
   public IRNode visit(AssignExpr node) throws MyError {
-    // TODO
-    return null;
+    IRExpr lhs = (IRExpr) node.lhs.accept(this);
+    IRExpr rhs = (IRExpr) node.rhs.accept(this);
+    if(node.rhs.info.equals(stringType)) {
+      var call = new IRCall();
+      call.funcName = "__string.copy";
+      call.type = irPtrType;
+      call.args = new ArrayList<>();
+      call.args.add(rhs.dest);
+      call.dest = (IRVarInfo) lhs.destAddr;
+      cur.addInst(call);
+    }
+    else {
+      var store = new IRStore();
+      store.dest = (IRVarInfo) lhs.destAddr;
+      store.src = rhs.dest;
+      cur.addInst(store);
+    }
+    return lhs;
   }
+
   public IRNode visit(TernaryExpr node) throws MyError {
     // TODO
     return null;
@@ -526,7 +595,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
     if(node.falseBranch == null) {
       var condJmp = new IRBranch(trueBr, end);
       trueBr.exit = new IRJump(end);
-      cur = cond;
+      // cur = cond;
       cond.exit = condJmp;
       IRExpr condExpr = (IRExpr) node.condition.accept(this);
       condJmp.condition = condExpr.dest;
@@ -540,7 +609,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
       var condJmp = new IRBranch(trueBr, falseBr);
       trueBr.exit = new IRJump(end);
       falseBr.exit = new IRJump(end);
-      cur = cond;
+      // cur = cond;
       cond.exit = condJmp;
       IRExpr condExpr = (IRExpr) node.condition.accept(this);
       condJmp.condition = condExpr.dest;
@@ -578,12 +647,75 @@ public class IRBuilder implements AstVisitor<IRNode> {
 
   public IRNode visit(WhileStmt node) throws MyError {
     // Remember: dests update
-    // TODO
+    String tmp = "while" + getLoopNumber();
+    var in = cur;
+    var cond = new IRBlock(tmp + ".cond." + getBlockLabel());
+    curFunc.blocks.add(cond);
+    var body = new IRBlock(tmp + ".body." + getBlockLabel());
+    curFunc.blocks.add(body);
+    var end = new IRBlock(tmp + ".end." + getBlockLabel(), cur.exit);
+    curFunc.blocks.add(end);
+
+    in.exit = new IRJump(cond);
+    body.exit = new IRJump(cond);
+
+    // cur = in;
+
+    // exit must be determined before accepting
+    cur = cond;
+    var condBr = new IRBranch(body, end);
+    cond.exit = condBr;
+    var condInfo = (IRExpr) node.condition.accept(this);
+    condBr.condition = condInfo.dest;
+
+    cur = body;
+    continueDests.add(cond);
+    breakDests.add(end);
+    node.body.accept(this);
+    breakDests.pop();
+    continueDests.pop();
+
+    cur = end;
     return null;
   }
 
   public IRNode visit(ForStmt node) throws MyError {
-    // TODO
+    String tmp = "for" + getLoopNumber();
+    var in = cur;
+    var cond = new IRBlock(tmp + ".cond." + getBlockLabel());
+    curFunc.blocks.add(cond);
+    var chng = new IRBlock(tmp + ".chng." + getBlockLabel());
+    curFunc.blocks.add(chng);
+    var body = new IRBlock(tmp + ".body." + getBlockLabel());
+    curFunc.blocks.add(body);
+    var end = new IRBlock(tmp + ".end." + getBlockLabel(), cur.exit);
+    curFunc.blocks.add(end);
+
+    in.exit = new IRJump(cond);
+    chng.exit = new IRJump(cond);
+    body.exit = new IRJump(chng);
+
+    // cur = in;
+    if(node.initExpr != null) node.initExpr.accept(this);
+    else if(node.initStmt != null) node.initStmt.accept(this);
+
+    cur = cond;
+    var condBr = new IRBranch(body, end);
+    cond.exit = condBr;
+    var condInfo = (IRExpr) node.condition.accept(this);
+    condBr.condition = condInfo.dest;
+
+    cur = chng;
+    node.step.accept(this);
+
+    cur = body;
+    continueDests.add(chng);
+    breakDests.add(end);
+    node.body.accept(this);
+    breakDests.pop();
+    continueDests.pop();
+
+    cur = end;
     return null;
   }
 

@@ -1,10 +1,12 @@
 package ir.util;
 
+import ir.node.IRType;
 import sema.util.error.InternalError;
 import sema.util.scope.BaseScope;
 import sema.util.scope.GlobalScope;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static sema.util.Position.blankPos;
 
@@ -13,6 +15,16 @@ public class IRUtil {
   public static int strCnt = 0;
   public static int blockCnt = 0;
   public static int ifCnt = 0;
+  public static int loopCnt = 0;
+
+  public static HashMap<String, Integer> sizeQuery;
+
+  public IRUtil() {
+    sizeQuery = new HashMap<>();
+    sizeQuery.put("i1", 1);
+    sizeQuery.put("i32", 4);
+    sizeQuery.put("ptr", 4);
+  }
 
   public static String getTmpVar() {
     return "%." + (tmpCnt++);
@@ -28,6 +40,10 @@ public class IRUtil {
 
   public static String getIfNumber() {
     return "if" + (ifCnt++);
+  }
+
+  public static String getLoopNumber() {
+    return "loop" + (loopCnt++);
   }
 
   public static String rename(String name, BaseScope scope) {
@@ -60,5 +76,13 @@ public class IRUtil {
     }
     str.append(list.get(list.size() - 1).toString());
     return str.toString();
+  }
+
+  public static void calcSize(String name, ArrayList<IRType> list) {
+    int sum = 0;
+    for(var t : list) {
+      sum += sizeQuery.get(t.typeName);
+    }
+    sizeQuery.put(name, sum);
   }
 }
