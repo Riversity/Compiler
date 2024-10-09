@@ -68,6 +68,16 @@ public class IRUtil {
             .replace("\\00", "$").replace("\\\\", "$").length();
   }
 
+  public static String fHeadConvert(String str) {
+    return str.substring(2, str.length() - 1).replace("\\n", "\\0A")
+            .replace("\\\"", "\\22").replace("$$", "$").concat("\\00");
+  }
+
+  public static String fBodyConvert(String str) {
+    return str.substring(1, str.length() - 1).replace("\\n", "\\0A")
+            .replace("\\\"", "\\22").replace("$$", "$").concat("\\00");
+  }
+
   public static <T> String arrayToString(ArrayList<T> list, String sep) {
     if(list == null || list.isEmpty()) return "";
     StringBuilder str = new StringBuilder();

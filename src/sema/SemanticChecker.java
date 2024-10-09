@@ -167,6 +167,7 @@ public class SemanticChecker implements AstVisitor<String> {
           throw new InvalidType("Cannot call member " + node.member +" of an array", node.pos);
         }
         else {
+          node.isArraySize = true;
           node.info = new FuncInfo(arraySizeFunc);
           node.isLValue = false;
         }
@@ -176,6 +177,7 @@ public class SemanticChecker implements AstVisitor<String> {
         if(classInfo == null) {
           throw new UndefinedIdentifier("Class symbol " + node.expr.info.name + " not found", node.pos);
         }
+        node.classInfo = classInfo;
         VarInfo memberVarInfo = classInfo.vars.get(node.member);
         if(memberVarInfo != null) {
           node.info = new TypeInfo(memberVarInfo.type);

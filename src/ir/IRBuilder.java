@@ -46,6 +46,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
   public IRNode visit(BaseNode node) throws MyError {
     throw new InternalError("IRBuilder ASTNode type invalid", node.pos);
   }
+
   public IRNode visit(Program node) throws MyError {
     var init = new IRFuncDef();
     init.name = "__init";
@@ -158,9 +159,11 @@ public class IRBuilder implements AstVisitor<IRNode> {
     curFunc = null;
     return ret;
   }
+
   public IRNode visit(ClassDef node) throws MyError {
     throw new InternalError("ClassDef should not be visited", node.pos);
   }
+
   public IRNode visit(VarDef node) throws MyError {
     for(var d : node.list) {
       var alloc = new IRAlloca();
@@ -169,9 +172,18 @@ public class IRBuilder implements AstVisitor<IRNode> {
       cur.addInst(alloc);
 
       if(d.b != null) {
+        IRExpr exprRes;
+        if(d.b instanceof LiteralML) {
+          NewExpr newExpr = new NewExpr();
+          newExpr.type = node.type;
+          newExpr.init = (LiteralML) d.b;
+          exprRes = (IRExpr) newExpr.accept(this);
+        }
+        else {
+          exprRes = (IRExpr) d.b.accept(this);
+        }
         var inst = new IRStore();
         inst.dest = alloc.dest;
-        var exprRes = (IRExpr) d.b.accept(this);
         inst.src = exprRes.dest;
         cur.addInst(inst);
       }
@@ -248,16 +260,56 @@ public class IRBuilder implements AstVisitor<IRNode> {
   }
 
   public IRNode visit(FStrExpr node) throws MyError {
-    // TODO
-    return null;
+    var ret = new IRExpr();
+
+    if(node.fAtom != null) {
+      var strPtr = new IRVarInfo(irPtrType, getStrVar());
+      strDefs.add(new IRStrDef(strPtr, fHeadConvert(node.fAtom)));
+      ret.dest = strPtr;
+    }
+    else {
+      var strPtr = new IRVarInfo(irPtrType, getStrVar());
+      strDefs.add(new IRStrDef(strPtr, fHeadConvert(node.fHead)));
+      ret.dest = strPtr;
+      // TODO
+    }
+    return ret;
   }
+
   public IRNode visit(MemberExpr node) throws MyError {
-    // TODO
-    return null;
+    // for func: see implementation for funcexpr
+    var expr = (IRExpr) node.expr.accept(this);
+    var dest = new IRVarInfo(irPtrType, getTmpVar());
+    Integer offset = node.classInfo.offset.get(node.member);
+    var getele = new IRGetElementPtr();
+    getele.isMember = true;
+    getele.index = new IRConstInfo(irIntType, offset.toString());
+    getele.type = new IRType((TypeInfo) node.info);
+    getele.src = expr.dest;
+    getele.dest = dest;
+    cur.addInst(getele);
+
+    var ret = new IRExpr();
+    ret.dest = dest;
+    return ret;
   }
+
   public IRNode visit(BracketExpr node) throws MyError {
-    // TODO
-    return null;
+    var arr = (IRExpr) node.array.accept(this);
+    var idx = (IRExpr) node.index.accept(this);
+    var type = new IRType(((TypeInfo) node.info));
+    var dest = new IRVarInfo(type, getTmpVar());
+    var destAddr = new IRVarInfo(irPtrType, getTmpVar());
+    var getele = new IRGetElementPtr();
+    getele.isMember = true;
+    getele.type = type;
+    getele.dest = new IRVarInfo(irPtrType, getTmpVar());
+    getele.src = arr.destAddr;
+    getele.index = idx.dest;
+    cur.addInst(getele);
+    var load = new IRLoad(dest, destAddr);
+    cur.addInst(load);
+    return new IRExpr(dest, destAddr);
   }
 
   public IRNode visit(FuncExpr node) throws MyError {
@@ -265,13 +317,23 @@ public class IRBuilder implements AstVisitor<IRNode> {
     var call = new IRCall();
     call.type = new IRType((TypeInfo) node.info);
     String curCallClass = null;
+    IRExpr baseVarInfo = null;
     if(node.func instanceof MemberExpr) {
       MemberExpr tmp = (MemberExpr) node.func;
-      curCallClass = tmp.expr.info.name;
+      if(tmp.isArraySize) {
+        curCallClass = "array";
+      }
+      else curCallClass = tmp.expr.info.name;
+      // if string, this should give "string"
+      baseVarInfo = (IRExpr) ((MemberExpr) node.func).expr.accept(this);
     }
     call.funcName = curCallClass != null ? "__" + curCallClass + "." + node.func.info.name : node.func.info.name;
     if(!call.type.equals(irVoidType)) call.dest = new IRVarInfo(call.type, getTmpVar());
     call.args = new ArrayList<>();
+    if(curCallClass != null) {
+      // add the base var as the first parameter %this
+      call.args.add(baseVarInfo.dest);
+    }
     for(var a : node.args) {
       IRExpr tmpRes = (IRExpr) a.accept(this);
       call.args.add(tmpRes.dest);
@@ -358,8 +420,8 @@ public class IRBuilder implements AstVisitor<IRNode> {
   public IRNode visit(NewExpr node) throws MyError {
     var type = node.type;
     var ret = new IRExpr();
+    var allocPlace = new IRVarInfo(irPtrType, getTmpVar());
     if(type.width.isEmpty()) {
-      var allocPlace = new IRVarInfo(irPtrType, getTmpVar());
       var call = new IRCall();
       call.funcName = "malloc";
       call.type = irPtrType;
@@ -379,7 +441,6 @@ public class IRBuilder implements AstVisitor<IRNode> {
       ret.dest = allocPlace;
     }
     else {
-      var allocPlace = new IRVarInfo(irPtrType, getTmpVar());
       var call = new IRCall();
       call.funcName = "__alloc";
       call.type = irPtrType;
@@ -399,10 +460,21 @@ public class IRBuilder implements AstVisitor<IRNode> {
         throw new InternalError("High dimension LiteralML not yet implemented", node.pos);
       }
       else {
-        for(var v : node.init.atomList) {
-          //var store = new IRStore();
-          //store.src = new
-          // TODO
+        int i = 0;
+        for(String v : node.init.atomList) {
+          var tmpStore = new IRVarInfo(irPtrType, getTmpVar());
+          var getele = new IRGetElementPtr();
+          getele.type = irIntType;
+          getele.isMember = false;
+          getele.src = allocPlace;
+          getele.dest = tmpStore;
+          getele.index = new IRConstInfo(irIntType, Integer.toString(i));
+          cur.addInst(getele);
+          var store = new IRStore();
+          store.src = new IRConstInfo(irIntType, v);
+          store.dest = tmpStore;
+          cur.addInst(store);
+          ++i;
         }
       }
     }
@@ -480,7 +552,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
     IRExpr lhs = (IRExpr) node.lhs.accept(this);
     IRExpr rhs = (IRExpr) node.rhs.accept(this);
 
-    if(node.lhs.info.equals(stringType)) {
+    if(stringType.equals(node.lhs.info)) {
       var call = new IRCall(); // dest, type, funcName
       call.args = new ArrayList<>();
       call.args.add(lhs.dest);
@@ -543,6 +615,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
     }
     return ret;
   }
+
   public IRNode visit(LiteralML node) throws MyError {
     throw new InternalError("LiteralML should not appear out of new", node.pos);
   }
@@ -550,7 +623,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
   public IRNode visit(AssignExpr node) throws MyError {
     IRExpr lhs = (IRExpr) node.lhs.accept(this);
     IRExpr rhs = (IRExpr) node.rhs.accept(this);
-    if(node.rhs.info.equals(stringType)) {
+    if(stringType.equals(node.rhs.info)) {
       var call = new IRCall();
       call.funcName = "__string.copy";
       call.type = irPtrType;
