@@ -19,13 +19,6 @@ public class IRUtil {
 
   public static HashMap<String, Integer> sizeQuery;
 
-  public IRUtil() {
-    sizeQuery = new HashMap<>();
-    sizeQuery.put("i1", 1);
-    sizeQuery.put("i32", 4);
-    sizeQuery.put("ptr", 4);
-  }
-
   public static String getTmpVar() {
     return "%." + (tmpCnt++);
   }
@@ -91,8 +84,22 @@ public class IRUtil {
   public static void calcSize(String name, ArrayList<IRType> list) {
     int sum = 0;
     for(var t : list) {
-      sum += sizeQuery.get(t.typeName);
+      var tmp = sizeQuery.get(t.typeName);
+      if(tmp == null) {
+        System.err.println(t.typeName);
+        tmp = 0;
+      }
+      sum += tmp;
     }
     sizeQuery.put(name, sum);
+  }
+
+  public static Integer checkSize(String typeName) {
+    var tmp = sizeQuery.get(typeName);
+    if(tmp == null) {
+      System.err.println(typeName);
+      tmp = 0;
+    }
+    return tmp;
   }
 }

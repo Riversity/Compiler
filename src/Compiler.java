@@ -14,6 +14,7 @@ import sema.util.error.TroubleMaker;
 
 public class Compiler {
   public static void main(String[] args) {
+    /*
     if (args.length == 0) {
       System.err.println("Usage: -fsyntax-only <filename>");
     } else if (args[0].equals("-fsyntax-only")) {
@@ -23,6 +24,7 @@ public class Compiler {
     } else {
       System.err.println("Unknown option");
     }
+    */
     try {
       var input = CharStreams.fromStream(System.in);
       MxLexer lexer = new MxLexer(input);

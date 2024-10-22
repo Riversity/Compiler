@@ -20,6 +20,7 @@ import sema.util.info.*;
 import sema.util.scope.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 
 import static ir.util.IRNative.*;
@@ -48,6 +49,11 @@ public class IRBuilder implements AstVisitor<IRNode> {
   }
 
   public IRNode visit(Program node) throws MyError {
+    sizeQuery = new HashMap<>();
+    sizeQuery.put("i1", 1);
+    sizeQuery.put("i32", 4);
+    sizeQuery.put("ptr", 4);
+
     var init = new IRFuncDef();
     init.name = "__init";
     init.params = new ArrayList<>();
@@ -141,9 +147,6 @@ public class IRBuilder implements AstVisitor<IRNode> {
     ret.returnType = new IRType(node.retType.info);
     ret.name = curClassName != null ? "__" + curClassName + "." + node.name : node.name;
     if(curClassName != null) ret.params.add(new IRVarInfo(irPtrType, "%this"));
-    for(var p : node.params) {
-      ret.params.add(new IRVarInfo(new IRType(p.a.info), rename(p.b, node.scope)));
-    }
     String name1 = getBlockLabel();
     String name2 = getBlockLabel();
     IRBlock curBlock = new IRBlock(name1, new IRJump());
@@ -152,6 +155,20 @@ public class IRBuilder implements AstVisitor<IRNode> {
     ((IRJump) curBlock.exit).end = nextBlock;
     ret.blocks.add(curBlock);
     ret.blocks.add(nextBlock);
+    for(var p : node.params) {
+      var type = new IRType(p.a.info);
+      var name = rename(p.b, node.scope);
+      var origin = new IRVarInfo(type, name + "origin");
+      ret.params.add(origin);
+      IRAlloca alloc = new IRAlloca();
+      alloc.type = type;
+      alloc.dest = new IRVarInfo(irPtrType, name);
+      cur.addInst(alloc);
+      IRStore store = new IRStore();
+      store.src = origin;
+      store.dest = alloc.dest;
+      cur.addInst(store);
+    }
     for(var s : node.body.statements) {
       s.accept(this);
     }
@@ -301,10 +318,10 @@ public class IRBuilder implements AstVisitor<IRNode> {
     var dest = new IRVarInfo(type, getTmpVar());
     var destAddr = new IRVarInfo(irPtrType, getTmpVar());
     var getele = new IRGetElementPtr();
-    getele.isMember = true;
+    getele.isMember = false;
     getele.type = type;
-    getele.dest = new IRVarInfo(irPtrType, getTmpVar());
-    getele.src = arr.destAddr;
+    getele.dest = destAddr;
+    getele.src = arr.dest;
     getele.index = idx.dest;
     cur.addInst(getele);
     var load = new IRLoad(dest, destAddr);
@@ -427,7 +444,8 @@ public class IRBuilder implements AstVisitor<IRNode> {
       call.type = irPtrType;
       call.dest = allocPlace;
       call.args = new ArrayList<>();
-      call.args.add(new IRConstInfo(irIntType, sizeQuery.get(type.info.name).toString()));
+      var irType = new IRType(type.info);
+      call.args.add(new IRConstInfo(irIntType, checkSize(irType.typeName).toString()));
       cur.addInst(call);
       if(!type.info.isNative) {
         // class constructor
@@ -446,11 +464,18 @@ public class IRBuilder implements AstVisitor<IRNode> {
       call.type = irPtrType;
       call.dest = allocPlace;
       call.args = new ArrayList<>();
-      call.args.add(new IRConstInfo(irIntType, sizeQuery.get(type.info.name).toString()));
+      var irType = new IRType(type.info);
+      call.args.add(new IRConstInfo(irIntType, checkSize(irType.typeName).toString()));
       call.args.add(new IRConstInfo(irIntType, Integer.toString(type.info.dimension)));
       call.args.add(new IRConstInfo(irIntType, Integer.toString(type.width.size()))); // == 0 how?
       for(var e : type.width) {
-        call.args.add(new IRConstInfo(irIntType, ((AtomExpr) e).val)); // sus
+        if(e instanceof AtomExpr) {
+          call.args.add(new IRConstInfo(irIntType, ((AtomExpr) e).val)); // sus
+        }
+        else {
+          IRExpr expr = (IRExpr) e.accept(this);
+          call.args.add(expr.dest);
+        }
       }
       cur.addInst(call);
       ret.dest = allocPlace;
@@ -587,7 +612,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
     }
     else {
       var arith = new IRArith();
-      ret.dest = arith.dest = new IRVarInfo(irIntType, getTmpVar());
+      ret.dest = arith.dest = new IRVarInfo(new IRType((TypeInfo) node.info), getTmpVar());
       arith.lhs = lhs.dest;
       arith.rhs = rhs.dest;
 
