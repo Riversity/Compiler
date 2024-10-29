@@ -22,9 +22,9 @@ public interface IRVisitor<T> {
   public T visit(IRGetElementPtr node) throws MyError;
   public T visit(IRJump node) throws MyError;
   public T visit(IRLoad node) throws MyError;
-  // public T visit(IRPhi node) throws MyError;
   public T visit(IRReturn node) throws MyError;
   public T visit(IRStore node) throws MyError;
+  public T visit(IRPhi node) throws MyError;
 
   // public T visit(IRCustom node) throws MyError;
 

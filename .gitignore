@@ -2,12 +2,12 @@
 .antlr
 .vscode
 */.vscode
-testcases
 *.iml
 ravel
+testcases
 test.py
-builtin.ll
-output.ll
-*.mx
 test.in
 test
+output.ll
+*.mx
+*.in

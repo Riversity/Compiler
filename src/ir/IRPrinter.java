@@ -122,6 +122,19 @@ public class IRPrinter implements IRVisitor<String> {
   }
 
   @Override
+  public String visit(IRPhi node) throws MyError {
+    StringBuilder str = new StringBuilder();
+    str.append(node.dest.name).append(" = phi ").append(node.dest.type);
+    boolean isFirst = true;
+    for(var p : node.vals) {
+      if(isFirst) isFirst = false;
+      else str.append(", ");
+      str.append(p.a.name).append(p.b.label);
+    }
+    return str.toString();
+  }
+
+  @Override
   public String visit(IRBlock node) throws MyError {
     StringBuilder str = new StringBuilder();
     str.append(node.label).append(":\n");
