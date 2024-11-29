@@ -5,9 +5,9 @@
 *.iml
 ravel
 testcases
-test.py
 test.in
 test
 output.ll
 *.mx
 *.in
+reimu
