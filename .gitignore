@@ -6,8 +6,11 @@
 ravel
 testcases
 test.in
+test.ll
+test.s
 test
 output.ll
+output.s
 *.mx
 *.in
 reimu

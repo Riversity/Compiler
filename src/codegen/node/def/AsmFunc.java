@@ -17,7 +17,7 @@ public class AsmFunc {
     StringBuilder str = new StringBuilder();
     str.append("  .globl ").append(name).append("\n");
     for (AsmBlock block : body) {
-      str.append(block.toString()).append("\n");
+      str.append(block.toString());
     }
     str.append("\n");
     return str.toString();

@@ -7,12 +7,10 @@ import sema.util.error.MyError;
 
 public class IRStrDef extends IRGlobDef {
   public String str;
-  public int length;
 
   public IRStrDef(IRVarInfo info, String str) {
     super(info);
     this.str = str;
-    length = str.length();
   }
 
   @Override

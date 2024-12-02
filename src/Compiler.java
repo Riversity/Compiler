@@ -1,3 +1,4 @@
+import codegen.AsmBuilder;
 import ir.IRBuilder;
 import ir.IRPrinter;
 import ir.node.IRNode;
@@ -41,8 +42,14 @@ public class Compiler {
       checker.visit((Program) program);
       IRBuilder irBuilder = new IRBuilder();
       IRNode rootNode = irBuilder.visit((Program) program);
-      IRPrinter printer = new IRPrinter();
-      System.out.println(printer.visit((IRRoot) rootNode));
+      if (args[0].equals("-l")) {
+        IRPrinter printer = new IRPrinter();
+        System.out.println(printer.visit((IRRoot) rootNode));
+        return;
+      }
+      AsmBuilder asmBuilder = new AsmBuilder();
+      asmBuilder.visit((IRRoot) rootNode);
+      System.out.println(asmBuilder.root);
     } catch (Exception e) {
       System.err.println(e.toString());
       if(e instanceof MyError) {

@@ -9,6 +9,6 @@ public class AsmStr {
 
   @Override
   public String toString() {
-    return label + ":\n  .asciz " + val + "\n";
+    return label + ":\n  .asciz \"" + val + "\"\n";
   }
 }
