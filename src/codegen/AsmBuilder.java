@@ -4,6 +4,7 @@ import codegen.node.AsmBlock;
 import codegen.node.AsmRoot;
 import codegen.node.def.*;
 import codegen.node.ins.*;
+import ir.IRPrinter;
 import ir.IRVisitor;
 import ir.node.*;
 import ir.node.def.*;
@@ -18,6 +19,8 @@ public class AsmBuilder implements IRVisitor<String> {
   public AsmRoot root;
   public AsmBlock cur;
   public MemManager mem;
+  public int raPos;
+  // public IRPrinter debug;
   //boolean isScan = true;
 
   @Override
@@ -45,6 +48,8 @@ public class AsmBuilder implements IRVisitor<String> {
 
     int i = 0;
     var intro = new AsmBlock(node.name);
+    raPos = mem.get();
+    intro.add(new SIns("sw", "sp", "ra", raPos));
     for(var p : node.params) {
       // TODO: count < 8
       intro.add(mem.addStore(p, "a" + i));
@@ -75,7 +80,6 @@ public class AsmBuilder implements IRVisitor<String> {
       return null;
     }
     AsmGlobVar glob = new AsmGlobVar(node.info.name.substring(1), 0);
-    mem.add(node.info);
     root.vars.add(glob);
     return null;
   }
@@ -84,8 +88,7 @@ public class AsmBuilder implements IRVisitor<String> {
   public String visit(IRStrDef node) throws MyError {
     String strnew = node.str.replace("\\0A", "\\n")
             .replace("\\22", "\\\"").replace("\\00", "");
-    var strDef = new AsmStr(node.info.name, strnew);
-    mem.add(node.info);
+    var strDef = new AsmStr(node.info.name.substring(1), strnew);
     root.strs.add(strDef);
     return null;
   }
@@ -156,7 +159,7 @@ public class AsmBuilder implements IRVisitor<String> {
   public String visit(IRCall node) throws MyError {
     int i = 0;
     for(var p : node.args) {
-      cur.add(mem.store(p, "a" + i));
+      cur.add(mem.extract(p, "a" + i));
       ++i;
     }
     cur.add(new CustomIns("call " + node.funcName));
@@ -199,6 +202,7 @@ public class AsmBuilder implements IRVisitor<String> {
       var res = mem.extract(node.val, "a0");
       cur.add(res);
     }
+    cur.add(new LIns("lw", "ra", "sp", raPos));
     cur.add(new CustomIns("ret"));
     return null;
   }
@@ -206,8 +210,8 @@ public class AsmBuilder implements IRVisitor<String> {
   @Override
   public String visit(IRStore node) throws MyError {
     cur.add(mem.extract(node.src, "t6"));
+    cur.add(mem.extract(node.dest, "t4"));
     cur.add(new SIns("sw", "t4", "t6", 0));
-    cur.add(mem.addStore(node.dest, "t4"));
     return null;
   }
 

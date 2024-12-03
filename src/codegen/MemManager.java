@@ -30,7 +30,6 @@ public class MemManager {
   public int add(IRBaseInfo info) {
     if(offset.containsKey(info.name)) {
       return offset.get(info.name);
-      // throw new InternalError(info.name + " should not be in map", blankPos);
     }
     cur -= 4;
     offset.put(info.name, cur);
@@ -42,19 +41,29 @@ public class MemManager {
       throw new InternalError(info.name + " should be just mapped", blankPos);
     }
     int pos = offset.get(info.name);
-    return new SIns("s" + ch(info.type), "sp", src, pos);
+    return new SIns("sw", "sp", src, pos);
   }
 
-  public AsmNode addStore(IRBaseInfo info, String src) {
+  public ArrayList<AsmNode> addStore(IRBaseInfo info, String src) {
+    var ret = new ArrayList<AsmNode>();
+    if(info.name.startsWith("@")) {
+      ret.add(new CustomIns("la t3, " + info.name.substring(1)));
+      ret.add(new SIns("sw", "t3", src, 0));
+      // Sus
+      return ret;
+    }
     add(info);
-    return store(info, src);
+    ret.add(store(info, src));
+    return ret;
   }
 
   public AsmNode extract(IRBaseInfo info, String dest) {
     if(info instanceof IRFuncInfo) throw new InternalError("Extract func info error!", blankPos);
-    var ret = new ArrayList<AsmNode>();
     int pos;
     if(info instanceof IRVarInfo) {
+      if(info.name.startsWith("@")) { // global
+        return new CustomIns("la " + dest + ", " + info.name.substring(1));
+      }
       if(!offset.containsKey(info.name)) {
         /* cur -= 4;
         offset.put(info.name, cur);
@@ -62,11 +71,16 @@ public class MemManager {
         throw new InternalError("Should have found offset of " + info.name, blankPos);
       }
       else pos = offset.get(info.name);
-      return new LIns("l" + ch(info.type), dest, "sp", pos);
+      return new LIns("lw", dest, "sp", pos);
     }
     if(info instanceof IRConstInfo) {
       return new CustomIns("li " + dest + ", " + info.name);
     }
-    return null;
+    throw new InternalError("Strange info of " + info.name, blankPos);
+  }
+
+  int get() {
+    cur -= 4;
+    return cur;
   }
 }

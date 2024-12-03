@@ -42,7 +42,7 @@ public class Compiler {
       checker.visit((Program) program);
       IRBuilder irBuilder = new IRBuilder();
       IRNode rootNode = irBuilder.visit((Program) program);
-      if (args[0].equals("-l")) {
+      if(args.length > 0) {
         IRPrinter printer = new IRPrinter();
         System.out.println(printer.visit((IRRoot) rootNode));
         return;

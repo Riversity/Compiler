@@ -15,7 +15,7 @@ public class AsmBlock {
     insts.add(ins);
   }
 
-  public void addAll(ArrayList<AsmNode> ins) {
+  public void add(ArrayList<AsmNode> ins) {
     insts.addAll(ins);
   }
 

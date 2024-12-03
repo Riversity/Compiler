@@ -6,10 +6,10 @@ public class SIns extends AsmNode {
   public String op, rs1, rs2;
   public int imm;
 
-  public SIns(String op, String rs1, String rs2, int imm) {
+  public SIns(String op, String rs1, String valToBeStored, int imm) {
     this.op = op;
     this.rs1 = rs1;
-    this.rs2 = rs2;
+    this.rs2 = valToBeStored;
     this.imm = imm;
   }
 
