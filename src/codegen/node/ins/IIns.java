@@ -19,8 +19,8 @@ public class IIns extends AsmNode {
       String opnew;
       if(op.equals("sltiu")) opnew = "sltu";
       else opnew = op.substring(0, op.length() - 1);
-      return "li" + " " + "t6" + ", " + imm + "\n  " +
-              opnew + " " + rd + ", " + rs1 + ", " + "t6\n";
+      return "li" + " " + "t1" + ", " + imm + "\n  " +
+              opnew + " " + rd + ", " + rs1 + ", " + "t1\n";
     }
     else {
       return op + " " + rd + ", " + rs1 + ", " + imm;

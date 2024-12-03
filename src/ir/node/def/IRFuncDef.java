@@ -14,6 +14,7 @@ public class IRFuncDef extends IRNode {
   public IRType returnType;
   public ArrayList<IRVarInfo> params;
   public ArrayList<IRBlock> blocks;
+  public int offset;
 
   @Override
   public <T> T accept(IRVisitor<T> visitor) throws MyError {

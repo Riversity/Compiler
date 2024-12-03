@@ -17,9 +17,9 @@ public class LIns extends AsmNode {
   public String toString() {
     // imm out of bound (11 bits)
     if(imm > 2047 || imm < -2048) {
-      return "li" + " " + "t6" + ", " + imm + "\n  " +
-              "add" + " " + "t6" + ", " + rs1 + ", " + "t6\n" +
-              op + " " + rd + ", " + "0(t6)";
+      return "li" + " " + "t1" + ", " + imm + "\n  " +
+              "add" + " " + "t1" + ", " + rs1 + ", " + "t1\n" +
+              op + " " + rd + ", " + "0(t1)";
     }
     return op + " " + rd + ", " + imm + "(" + rs1 + ")";
   }

@@ -19,9 +19,9 @@ public class AsmBuilder implements IRVisitor<String> {
   public AsmRoot root;
   public AsmBlock cur;
   public MemManager mem;
-  public int raPos;
-  // public IRPrinter debug;
-  //boolean isScan = true;
+  public IRPrinter debug = new IRPrinter();
+  boolean isScan = true;
+  int offset;
 
   @Override
   public String visit(IRNode node) throws MyError {
@@ -30,29 +30,49 @@ public class AsmBuilder implements IRVisitor<String> {
 
   @Override
   public String visit(IRRoot node) throws MyError {
-    root = new AsmRoot();
-    mem = new MemManager();
+    if(isScan) {
+      root = new AsmRoot();
+      mem = new MemManager();
+      for(var func : node.funcs) {
+        func.accept(this);
+      }
+      isScan = false;
+      return null;
+    }
     for(var def : node.defs) {
       def.accept(this);
     }
     for(var func : node.funcs) {
       func.accept(this);
     }
-    //isScan = false;
     return null;
   }
 
   @Override
   public String visit(IRFuncDef node) throws MyError {
+    if(isScan) {
+      offset = 8; // 0 reserved, 4 for ra
+      for(var p : node.params) {
+        mem.add(p, offset);
+        offset += 4;
+      }
+      for(var b : node.blocks) {
+        b.accept(this);
+      }
+      node.offset = offset;
+      return null;
+    }
     var func = new AsmFunc(node.name);
 
     int i = 0;
     var intro = new AsmBlock(node.name);
-    raPos = mem.get();
-    intro.add(new SIns("sw", "sp", "ra", raPos));
+
+    offset = node.offset;
+    intro.add(new IIns("addi", "sp", "sp", -offset));
+    intro.add(new SIns("sw", "sp", "ra", 4));
     for(var p : node.params) {
-      // TODO: count < 8
-      intro.add(mem.addStore(p, "a" + i));
+      // count > 8 ?
+      intro.add(mem.store(p, "a" + i));
       ++i;
     }
     func.body.add(intro);
@@ -76,6 +96,7 @@ public class AsmBuilder implements IRVisitor<String> {
 
   @Override
   public String visit(IRGlobDef node) throws MyError {
+    if(isScan) return null;
     if(node.info.type instanceof IRStructType) {
       return null;
     }
@@ -86,6 +107,7 @@ public class AsmBuilder implements IRVisitor<String> {
 
   @Override
   public String visit(IRStrDef node) throws MyError {
+    if(isScan) return null;
     String strnew = node.str.replace("\\0A", "\\n")
             .replace("\\22", "\\\"").replace("\\00", "");
     var strDef = new AsmStr(node.info.name.substring(1), strnew);
@@ -95,15 +117,26 @@ public class AsmBuilder implements IRVisitor<String> {
 
   @Override
   public String visit(IRAlloca node) throws MyError {
-    mem.cur -= 4;
-    IIns calcPos = new IIns("addi", "t6", "sp", mem.cur);
+    if(isScan) {
+      mem.add(node.dest, offset);
+      offset += 4;
+      node.offset = offset;
+      offset += 4;
+      return null;
+    }
+    IIns calcPos = new IIns("addi", "t6", "sp", node.offset);
     cur.add(calcPos);
-    cur.add(mem.addStore(node.dest, "t6"));
+    cur.add(mem.store(node.dest, "t6"));
     return null;
   }
 
   @Override
   public String visit(IRArith node) throws MyError {
+    if(isScan) {
+      mem.add(node.dest, offset);
+      offset += 4;
+      return null;
+    }
     // t4 = t5 % t6
     cur.add(mem.extract(node.lhs, "t5"));
     cur.add(mem.extract(node.rhs, "t6"));
@@ -143,20 +176,30 @@ public class AsmBuilder implements IRVisitor<String> {
           break;
       }
     }
-    cur.add(mem.addStore(node.dest, "t4"));
+    cur.add(mem.store(node.dest, "t4"));
     return null;
   }
 
   @Override
   public String visit(IRBranch node) throws MyError {
+    if(isScan) return null;
     cur.add(mem.extract(node.condition, "t6"));
-    cur.add(new CustomIns("beqz t6, " + node.falseEnd.label));
+    cur.add(new CustomIns("beqz t6, " + node.falseEnd.label + ".tmp"));
     cur.add(new CustomIns("j " + node.trueEnd.label));
+    cur.add(new CustomIns(node.falseEnd.label + ".tmp:"));
+    cur.add(new CustomIns("j " + node.falseEnd.label));
     return null;
   }
 
   @Override
   public String visit(IRCall node) throws MyError {
+    if(isScan) {
+      if(node.dest != null) {
+        mem.add(node.dest, offset);
+        offset += 4;
+      }
+      return null;
+    }
     int i = 0;
     for(var p : node.args) {
       cur.add(mem.extract(p, "a" + i));
@@ -164,51 +207,68 @@ public class AsmBuilder implements IRVisitor<String> {
     }
     cur.add(new CustomIns("call " + node.funcName));
     if(node.dest != null) {
-      cur.add(mem.addStore(node.dest, "a0"));
+      cur.add(mem.store(node.dest, "a0"));
     }
     return null;
   }
 
   @Override
   public String visit(IRGetElementPtr node) throws MyError {
+    if(isScan) {
+      mem.add(node.dest, offset);
+      offset += 4;
+      return null;
+    }
+    cur.add(new CustomIns("# " + debug.visit(node)));
     cur.add(mem.extract(node.src, "t5"));
     cur.add(mem.extract(node.index, "t6"));
-    if(node.isMember) { // first load the object ptr pointing to
-      cur.add(new LIns("lw", "t5", "t5", 0));
-    }
+    //if(node.isMember) { // first load the object ptr pointing to
+    //  cur.add(new LIns("lw", "t5", "t5", 0));
+    //}
     cur.add(new IIns("slli", "t6", "t6", 2)); // 4 * index
     cur.add(new RIns("add", "t4", "t5", "t6"));
-    cur.add(mem.addStore(node.dest, "t4"));
+    cur.add(mem.store(node.dest, "t4"));
     return null;
   }
 
   @Override
   public String visit(IRJump node) throws MyError {
+    if(isScan) return null;
     cur.add(new CustomIns("j " + node.end.label));
     return null;
   }
 
   @Override
   public String visit(IRLoad node) throws MyError {
+    if(isScan) {
+      mem.add(node.dest, offset);
+      offset += 4;
+      return null;
+    }
+    cur.add(new CustomIns("# " + debug.visit(node)));
     cur.add(mem.extract(node.src, "t6"));
     cur.add(new LIns("lw", "t4", "t6", 0));
-    cur.add(mem.addStore(node.dest, "t4"));
+    cur.add(mem.store(node.dest, "t4"));
     return null;
   }
 
   @Override
   public String visit(IRReturn node) throws MyError {
+    if(isScan) return null;
     if(node.val != null) {
       var res = mem.extract(node.val, "a0");
       cur.add(res);
     }
-    cur.add(new LIns("lw", "ra", "sp", raPos));
+    cur.add(new LIns("lw", "ra", "sp", 4));
+    cur.add(new IIns("addi", "sp", "sp", offset));
     cur.add(new CustomIns("ret"));
     return null;
   }
 
   @Override
   public String visit(IRStore node) throws MyError {
+    if(isScan) return null;
+    cur.add(new CustomIns("# " + debug.visit(node)));
     cur.add(mem.extract(node.src, "t6"));
     cur.add(mem.extract(node.dest, "t4"));
     cur.add(new SIns("sw", "t4", "t6", 0));

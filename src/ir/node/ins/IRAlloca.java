@@ -8,6 +8,7 @@ import sema.util.error.MyError;
 public class IRAlloca extends IRBaseInst {
   public IRVarInfo dest;
   public IRType type;
+  public int offset;
 
   @Override
   public <T> T accept(IRVisitor<T> visitor) throws MyError {

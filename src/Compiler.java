@@ -48,6 +48,7 @@ public class Compiler {
         return;
       }
       AsmBuilder asmBuilder = new AsmBuilder();
+      asmBuilder.visit((IRRoot) rootNode); // Scan
       asmBuilder.visit((IRRoot) rootNode);
       System.out.println(asmBuilder.root);
     } catch (Exception e) {

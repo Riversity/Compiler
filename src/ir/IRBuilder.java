@@ -58,7 +58,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
     init.name = "__init";
     init.params = new ArrayList<>();
     init.blocks = new ArrayList<>();
-    init.blocks.add(new IRBlock("init", new IRReturn(irVoidType, null)));
+    init.blocks.add(new IRBlock("__init.init", new IRReturn(irVoidType, null)));
     init.returnType = irVoidType;
 
     var ret = new IRRoot();
@@ -146,7 +146,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
     curFunc = ret;
     ret.returnType = new IRType(node.retType.info);
     ret.name = curClassName != null ? "__" + curClassName + "." + node.name : node.name;
-    if(curClassName != null) ret.params.add(new IRVarInfo(irPtrType, "%this"));
+    if(curClassName != null) ret.params.add(new IRVarInfo(irPtrType, "%this." + curFunc.name));
     String name1 = getBlockLabel();
     String name2 = getBlockLabel();
     IRBlock curBlock = new IRBlock(name1, new IRJump());
@@ -242,7 +242,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
             getele.isMember = true;
             getele.index = new IRConstInfo(irIntType, Integer.toString(offset));
             getele.type = new IRType("%class." + curClassName);
-            getele.src = new IRVarInfo(irPtrType, "%this");
+            getele.src = new IRVarInfo(irPtrType, "%this." + curFunc.name);
             var src = new IRVarInfo(irPtrType, tmpName);
             getele.dest = src;
             cur.addInst(getele);
@@ -266,7 +266,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
         ret.dest = strDest;
         break;
       case THIS:
-        ret.dest = new IRVarInfo(irPtrType, "%this");
+        ret.dest = new IRVarInfo(irPtrType, "%this." + curFunc.name);
         break;
       default:
         throw new InternalError("IRBuilder AtomExpr failed", node.pos);
@@ -353,7 +353,7 @@ public class IRBuilder implements AstVisitor<IRNode> {
     else if(((AtomExpr) node.func).whereToFind instanceof ClassScope) {
       // ClassDef self reference
       curCallClass = curClassName;
-      call.args.add(new IRVarInfo(irPtrType, "%this"));
+      call.args.add(new IRVarInfo(irPtrType, "%this." + curFunc.name));
     }
     call.funcName = curCallClass != null ? "__" + curCallClass + "." + node.func.info.name : node.func.info.name;
 
