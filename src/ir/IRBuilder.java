@@ -652,7 +652,10 @@ public class IRBuilder implements AstVisitor<IRNode> {
   }
 
   public IRNode visit(LiteralML node) throws MyError {
-    throw new InternalError("LiteralML should not appear out of new", node.pos);
+    // throw new InternalError("LiteralML should not appear out of new", node.pos);
+    IRExpr ret = new IRExpr();
+    ret.dest = new IRConstInfo(irPtrType, "null");
+    return ret;
   }
 
   public IRNode visit(AssignExpr node) throws MyError {

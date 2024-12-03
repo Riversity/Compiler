@@ -14,5 +14,5 @@ clean:
 	find bin -name '*.class' -or -name '*.jar' | xargs rm -f
 
 .PHONY: run
-run: 
-	java -cp bin:$(ANTLR_JAR) Compiler
+run:
+	java -cp bin:$(ANTLR_JAR) Compiler && cat builtin.s
